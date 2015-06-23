@@ -1,0 +1,119 @@
+/* Simple Portr stylesheet for use with shiny*/
+
+h1, h2, h3, h4{
+	color:#36648B;
+	
+}
+
+.mainBody{
+	margin:0 auto;
+	max-width:800px;
+}
+
+.topBox{
+padding:10px;
+border-bottom: solid #f6f6f6;
+border-top: solid #f6f6f6;
+}
+
+.topBox h2, .topBox h3,.topBox h4, .topBox h5,.topBox h6{
+color: #4D4D4D;
+font-family: museo300, Helvetica, Arial, Sans;
+}
+
+.sectionTitle{
+    color: #ffffff; 
+    border-bottom: solid; 
+    border-thickness: 1px; 
+    border-color: #36648B;
+    margin-top:20px; 
+    height: 23px; 
+    padding-left:5px;
+}
+
+.box{
+background-color:#F2F2F2;
+/*background-color:#E6E6FA;*/
+border-radius:5px;
+padding:5px;
+text-align:center
+}
+
+.box h2, .box h3,.box h4,.box h5,.box h6{
+color: #4D4D4D;
+font-family: museo300, Helvetica, Arial, Sans;
+}
+
+.box p{
+color: #68838B;
+font-family: museo300, Helvetica, Arial, Sans;
+
+}
+
+.minibox{
+background-color:#FCFCFC;
+border-radius:5px;
+padding:5px;
+text-align:center
+}
+
+.minibox h2, .minibox h3,.minibox h4,.minibox h5,.minibox h6{
+color: #4D4D4D;
+font-family: museo300, Helvetica, Arial, Sans;
+}
+
+.minibox p{
+color: #68838B;
+font-family: museo300, Helvetica, Arial, Sans;
+font-size: 10px;
+}
+
+.sideBox{
+background-color:#F2F2F2;
+border-radius:5px;
+padding:3px;
+text-align:left;
+padding-left:10px;
+}
+
+.sideBox h2, .sideBox h3,.sideBox h4, .sideBox h5,.sideBox h6{
+color: #4D4D4D;
+font-family: museo300, Helvetica, Arial, Sans;
+}
+
+.sideBox p{
+color: #68838B;
+}
+
+.statsContainer{
+	padding:0px; 
+	margin-top:20px; 
+	margin-bottom:30px; 
+	border-bottom: solid #f6f6f6;
+}
+
+@font-face {
+    font-family: 'museo300';
+    src: url('fonts/Museo300-Regular-webfont.eot');
+    src: url('fonts/Museo300-Regular-webfont.eot?#iefix') format('embedded-opentype'),
+         url('fonts/Museo300-Regular-webfont.woff2') format('woff2'),
+         url('fonts/Museo300-Regular-webfont.woff') format('woff'),
+         url('fonts/Museo300-Regular-webfont.ttf') format('truetype'),
+         url('fonts/Museo300-Regular-webfont.svg#museo300') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'museo500';
+    src: url('fonts/Museo500-Regular-webfont.eot');
+    src: url('fonts/Museo500-Regular-webfont.eot?#iefix') format('embedded-opentype'),
+         url('fonts/Museo500-Regular-webfont.woff2') format('woff2'),
+         url('fonts/Museo500-Regular-webfont.woff') format('woff'),
+         url('fonts/Museo500-Regular-webfont.ttf') format('truetype'),
+         url('fonts/Museo500-Regular-webfont.svg#museo500') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
