@@ -1,6 +1,6 @@
 #  JD for Portr Ltd, June 2015
 #  Source this file when running Shiny dashboard
-#  Inputs and Outputs: 
+#  Includes main reactive functions to user with App.R 
 
 #  Determine what Time Span for data analysis 
 range  <-  reactive({

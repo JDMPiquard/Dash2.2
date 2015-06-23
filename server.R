@@ -1,11 +1,11 @@
+# JD for Portr LTD, June 2015
+# Server Page
 
 
-
-
-#  load up the header file
+#  HEADER FILE
 source('external/serverHead.R', local=T)
 
-# load up main file with all the required server R script for clarity
+#  MAIN FILE IS app.R
 shinyServer(function(input,output, clientData, session){
   source('external/app.R', local = T)
   })
