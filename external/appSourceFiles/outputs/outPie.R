@@ -5,6 +5,7 @@
 #pie chart dimensions
 WI <- 300 #set width
 HI <- 300 #set height
+PH <- 0.3
 
 #Sex
 output$sex <- renderGvis({
@@ -22,7 +23,7 @@ output$sex <- renderGvis({
                              title='Sex (using title)',
                              legend='none',
                              pieSliceText='label',
-                             pieHole=0.5),
+                             pieHole=PH),
                            chartid="doughnutSex")
   return(doughnut)
 })
@@ -52,7 +53,7 @@ output$luggage <- renderGvis({
                              title='Luggage type',
                              legend='none',
                              pieSliceText='label',
-                             pieHole=0.5),
+                             pieHole=PH),
                            chartid="doughnutLug")
   return(doughnut)
 })
@@ -79,7 +80,7 @@ output$journey <- renderGvis({
                              title='Journey type',
                              legend='none',
                              pieSliceText='label',
-                             pieHole=0.5),
+                             pieHole=PH),
                            chartid="doughnutJourney")
   return(doughnut)
 })
@@ -115,7 +116,7 @@ output$type <- renderGvis({
                              title='Deliveries by type (Airport is faulty)',
                              legend='none',
                              pieSliceText='label',
-                             pieHole=0.3),
+                             pieHole=PH),
                            chartid="doughnutType")
   return(doughnut)
 })
@@ -140,7 +141,7 @@ output$ZONE <- renderGvis({
                              title='Zone Breakdown',
                              legend='none',
                              pieSliceText='label',
-                             pieHole=0.5),
+                             pieHole=PH),
                            chartid="doughnut")
   return(doughnut)
 })
@@ -167,7 +168,7 @@ output$DAY <- renderGvis({
                              title='Day Breakdown',
                              legend='none',
                              pieSliceText='label',
-                             pieHole=0.35),
+                             pieHole=PH),
                            chartid="doughnut2")
   
 })
