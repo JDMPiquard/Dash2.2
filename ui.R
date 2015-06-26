@@ -1,6 +1,6 @@
 #  JD for Portr, June 2015
 #  Shiny UI page for Internal Dashboard
-#  
+#  /Users/JD/OneDrive/AirPortr/Analytics/ShinyDashOne/Dash2.2
 
 require(shiny)
 require(rCharts)
@@ -49,7 +49,7 @@ shinyUI(fluidPage(
       ),
    
       #  TAB 3: Produt Statistics
-      tabPanel('Product Statistics',
+      tabPanel('Download Summaries and Reports',
       	source("uiComponents/TabProdStats.R",local=T)$value
       )
                   

@@ -2,65 +2,39 @@
 # Boxed Number Outputs
 #
 
-#bookings
+# bookings
 output$W  <- renderText({
-  if(is.null(ready())) return(NULL)
-  
-  df <- sumDate()
-  sum(df$bookings)
+  KPI()$bookings
 })
-#bags
+# bags
 output$X  <- renderText({
-  if(is.null(ready())) return(NULL)
-  
-  df <- sumDate()
-  sum(df$totalBags)
+  KPI()$bags
 })
-#net revenue
+# Gross revenue
 output$Y  <- renderText({
-  if(is.null(ready())) return(NULL)
-  
-  df <- sumDate()
-  paste(round(sum(df$netRevenue*1.2)),"GBP")
+  paste(round(KPI()$netRevenue*1.2),"GBP")
 })
-#avg bags
+# avg bags
 output$mX  <- renderText({
-  if(is.null(ready())) return(NULL)
-  
-  df <- sumDate()
-  round(sum(df$totalBags)/sum(df$bookings), digits = 1)
+  KPI()$avgBags
 })
-#net revenue per booking
+# gross revenue per booking
 output$mY  <- renderText({
-  if(is.null(ready())) return(NULL)
-  
-  df <- sumDate()
-  paste(round(sum(df$netRevenue)/sum(df$bookings)*1.2, digits = 2),"GBP")
+  paste(round(KPI()$netRevBooking*1.2, digits = 2),"GBP")
 })
-#ne
+# Pre-bookings
 output$preBook <- renderText({
-  if(is.null(ready())) return(NULL)
-  
-  df <- bookingsRange()
-  preBook <- round(sum(grepl("prebook",df$Department))/length(df$Department), digits=2)*100
-  paste(preBook,"%")
+  paste(round(KPI()$preBook*100, digits=2),"%")
 })
-
-#Return Journeys
+# Return Journeys
 output$txtRtn <- renderText({
-  if(is.null(ready())) return(NULL)
-  
-  allData <- bookingsRange()
-  
-  tit <- ddply (allData, "Single_return", summarize, count = length(Cancelled))
-  tit$Single_return  <- as.character(tit$Single_return)
-  paste(tit[2,2])
+  KPI()$returnBookings
 })
-
-#Carousel Collections
+# Carousel Collections
 output$txtCCnD <- renderText({
-  if(is.null(ready())) return(NULL)
-  
-  df <- Carousel()
-  paste(length(df$Booking_reference))
+  paste(KPI()$ccndBookings)
+})
+# Pre Booking Time, excluding Airport and office IP addresses
+output$preBookTime <- renderText({
+  paste(KPI()$preBookTime,"mins")
 })

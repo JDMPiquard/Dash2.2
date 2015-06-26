@@ -5,6 +5,7 @@
 
 #  source reactive expressions and other code
 source('external/appSourceFiles/reactives.R', local=T)  #  reactives
+source('external/appSourceFiles/reactKPI.R', local=T)
 
 # INDICATIVE TEXT/TITLES
   # show selected date range in title

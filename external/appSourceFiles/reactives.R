@@ -28,7 +28,7 @@
     vec <- gsub("LHR","Heathrow",vec)
     vec <- gsub("LGW","Gatwick",vec)
     vec <- gsub("STN","Stansted",vec)
-    vec <- gsub("Storage","Storage",vec)
+    vec <- gsub("Storage","Other",vec)
     vec <- gsub("LCY","London City Airport",vec)
     vec
   })
@@ -36,22 +36,16 @@
 # DATA FRAMES
 
   # MAIN DATA IMPORT AND CLEAN UP
-    all  <- reactive({
+    original  <- reactive({
       temp  <- input$file
       
       if (is.null(temp))
         return(NULL) #returns NULL if there is no file yet
       
-      allData <- read.csv(temp$datapath)
+      bookings <- read.csv(temp$datapath)
       
       # start cleaning up data
-
-      colnames(allData)[1] <- "Booking_reference"
-      # allow toggling of showing zero value bookings
-      if(input$showAll == T){
-        bookings <- subset(allData, Transaction_payment > 0) #exclude promotional or internal deliveries
-      }
-      else{bookings <- subset(allData, Transaction_payment >= 0)}
+      colnames(bookings)[1] <- "Booking_reference"  # Seems to solve corrupted header name
       
       # remember conversion into date, considering format
       bookings$day <- weekdays(as.Date(bookings$Outward_Journey_Luggage_drop_off_date, format = "%d/%m/%Y"))
@@ -61,14 +55,6 @@
       bookings$rank  <- as.Date(paste0(bookings$year,'-',bookings$month,'-01'),"%Y-%m-%d")
       
       bookings$Outward_Journey_Luggage_Collection_date <- as.Date(bookings$Outward_Journey_Luggage_Collection_date, format = "%d/%m/%Y")
-      
-      bookingsKeep <- bookings
-      
-      # REPORT MODE OPTION
-      if(input$reportMode==1){
-        bookings <- subset(bookings, date>=range()[1]&date<=range()[2])
-      }
-      else{bookings <- bookingsKeep}
       
       # Cleaning up postCodes
       bookings$from <- as.character(bookings$Outward_Journey_Luggage_collection_location_addresss_Postcode)
@@ -80,12 +66,46 @@
       bookings$Out.bound_flt_code <- gsub(" ", "", bookings$Out.bound_flt_code, fixed = TRUE)
       bookings$Out.bound_flt_code  <- toupper(bookings$Out.bound_flt_code)
       
-      # filtering by airport
-      bookings$filter  <- grepl(paste(filter(),collapse="|"),bookings$Outward_Journey_Luggage_collection_location_Name,ignore.case=TRUE)|grepl(paste(filter(),collapse="|"),bookings$Outward_Journey_Luggage_drop_off_location_Name,ignore.case=TRUE)
-      bookings <- bookings[bookings$filter == 1,]
-      
       bookings
     })
+
+  # APPLY FILTERING CONDITIONS
+    all <- reactive({
+      bookings <- original()
+      bookingsKeep <- bookings
+
+      # allow toggling of showing zero value bookings
+      if(input$showAll == T){
+        bookings <- subset(bookings, Transaction_payment > 0) #exclude promotional or internal deliveries
+      }
+      else{bookings <- subset(bookings, Transaction_payment >= 0)}
+
+      # REPORT MODE OPTION
+      if(input$reportMode==1){
+        bookings <- subset(bookings, date>=range()[1]&date<=range()[2])
+      }
+      else{bookings <- bookingsKeep}
+
+      # filtering by airport
+      # THIS VERSION OF THE FILTER NOW SEEMS TO BE WORKING
+      bookings$filter  <- 
+        (grepl(paste(filter(),collapse="|"),bookings$Outward_Journey_Luggage_collection_location_Name,ignore.case=TRUE)
+          &!grepl("storage",bookings$Outward_Journey_Luggage_collection_location_Name,ignore.case=TRUE)
+        )|(
+        grepl(paste(filter(),collapse="|"),bookings$Outward_Journey_Luggage_drop_off_location_Name,ignore.case=TRUE)
+          &!grepl("storage",bookings$Outward_Journey_Luggage_drop_off_location_Name,ignore.case=TRUE)
+        )|(
+        grepl("storage",bookings$Outward_Journey_Luggage_collection_location_Name,ignore.case=TRUE)
+          &sum(grepl('Other',filter(),ignore.case=T))
+        )|(
+        grepl("storage",bookings$Outward_Journey_Luggage_drop_off_location_Name,ignore.case=TRUE)
+          &sum(grepl('Other',filter(),ignore.case=T)))
+      bookings <- bookings[bookings$filter == 1,]
+
+      bookings
+
+    })
+
 
   # SUMMARIZE BY MONTH (AND YEAR)
     sumMonth <- reactive({
@@ -99,14 +119,14 @@
       sumBookings
     })
 
-  # CALCULATE CUMMULATIVE
-    sumCum  <- reactive({
-      sumBookings  <- sumMonth()
-      sumBookings$rank  <- as.Date(paste0(sumBookings$year,'-',sumBookings$month,'-01'),"%Y-%m-%d")
-      sumBookings <- sumBookings[order(sumBookings$rank),]
-      sumBookings  <- within(sumBookings, cum  <- cumsum(netRevenue)) #calculating cummulatives
-      
-    })
+    # CALCULATE CUMMULATIVE
+      sumCum  <- reactive({
+        sumBookings  <- sumMonth()
+        sumBookings$rank  <- as.Date(paste0(sumBookings$year,'-',sumBookings$month,'-01'),"%Y-%m-%d")
+        sumBookings <- sumBookings[order(sumBookings$rank),]
+        sumBookings  <- within(sumBookings, cum  <- cumsum(netRevenue)) #calculating cummulatives
+        
+      })
 
   # SUBSET BOOKINGS WITHIN INPUT DATE RANGE
     bookingsRange  <- reactive({
@@ -175,7 +195,7 @@
       #     allData <- allData[- grep("bagstorage@portr.com",allData$customer_email), ]
       #   }
       
-      # Summrize by customer e-mail
+      # Summarize by customer e-mail
       reUser.df <- ddply (allData, "customer_email", summarize, bookings = length(Cancelled), totalBags = sum(Total_luggage_No), meanBags = round(mean(Total_luggage_No),digits=1), netRevenue = round(sum(Transaction_payment)/1.2))
       reUser.df$avgRevenue <- round(reUser.df$netRevenue/reUser.df$bookings, digits=2)
       reUser.df <- reUser.df[with(reUser.df,order(-bookings,-avgRevenue)), ]
@@ -215,5 +235,34 @@
                          "Transaction_payment","In.bound_flt_code","Origin")]
     })
 
-# KPIs
+  # POPULAR IP ADDRESSES
+    IPs <- reactive({
+
+      IPtemp <- ddply(bookingsRange(),c("ip_address", "Department"), summarize,
+        books=length(Total_product_number),
+        BookingTime=round(mean(Booking_completion_time[Booking_completion_time!=0])/60,2)
+      )
+      # Reorder
+      IPtemp[with(IPtemp,order(-books)),]
+      # Exclude Blanks
+      IPtemp <- IPtemp[IPtemp$ip_address!='',]
+
+      rownames(IPtemp) <- NULL
+
+      IPtemp
+
+    })
+     
+
+    # lgwEPOS <- reactive({
+    #   data <- bookingsRange()
+    #   l <- length(data$Cancelled)
+
+    # Retailer <- matrix(ncol=1,nrow=l)
+    # Retailer <- "AP"
+
+
+
+    #   df <- bookings[, c()]
+    # })
 

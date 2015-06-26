@@ -77,8 +77,8 @@ div(
       # Careful, the following is hard coded
       column(2,
         div(
-          h4('Not Yet'),
-          p("Swift Check-Ins"),
+          h4(textOutput("preBookTime")),
+          p("Median Online Booking Time"),
           class = "minibox")
       )
         

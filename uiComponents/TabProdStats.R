@@ -2,30 +2,53 @@
 # UI and Graph output for Product Statistics tab
 # 
 
-# CC&D Summary Data
-div(class="statsContainer",
-    fluidRow(
-      column(8,
-             h4("BA Carousel Collections")),
-      column(4,
-             downloadButton('downloadCCnD', 'Download extended version'))  #  Download BA report style
-    ),
-    
-    # Summary Boxes: NOT IN USE
-    fluidRow(
-      column(4,
-             htmlOutput("CC1")
+
+div(
+  # CC&D Summary Data
+  fluidRow(
+    div(class="statsContainer",
+      fluidRow(
+        column(8,
+               h4("BA Carousel Collections")),
+        column(4,
+               downloadButton('downloadCCnD', 'Download extended version'))  #  Download BA report style
       ),
-      column(4,
-             htmlOutput("CC2")
+      
+      # Summary Boxes: NOT IN USE
+      fluidRow(
+        column(4,
+               htmlOutput("CC1")
+        ),
+        column(4,
+               htmlOutput("CC2")
+        ),
+        column(4,
+               htmlOutput("CC3")
+        )
       ),
-      column(4,
-             htmlOutput("CC3")
+  
+      # TABLE: CC&D Summary Stats
+      fluidRow(style="margin-top:10px;",
+        dataTableOutput(outputId="CCnD")
       )
-    ),
-    
-    # TABLE: CC&D Summary Stats
-    fluidRow(class = "statsContainer",
-      dataTableOutput(outputId="CCnD")
     )
+  ),
+
+  # LGW EPOS REPORTS
+  fluidRow(
+    div(class="statsContainer",
+      p(" "),
+      fluidRow(
+        column(8,
+               h4("LGW EPOS Report")),
+        column(4,
+               downloadButton('downloadEPOS', 'Download EPOS report'))  #  Download BA report style
+      )
+  
+  
+  #     fluidRow(
+  #       dataTableOutput(outputId="EPOS")
+  #     )
+    )
+  )
 )

@@ -11,3 +11,9 @@ require(ggplot2)
 require(googleVis)
 
 #  can also be used to store global variables, insert them below
+
+ipExclude <- c(
+  '',
+  '213.123.58.114',
+  '80.87.25.183',
+  '81.144.134.68')
