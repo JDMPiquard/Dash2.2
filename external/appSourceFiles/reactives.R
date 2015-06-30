@@ -6,7 +6,7 @@
   #  Determine what Time Span for data analysis 
   range  <-  reactive({
     if(input$radio==1){
-      return(c(as.Date("2014-05-22", format= "%Y-%m-%d"),Sys.Date()))
+      return(c(as.Date(startDate$LCY, format= "%Y-%m-%d"),Sys.Date()))
     }else if(input$radio==2){
       return(input$dates)
     }else if(input$radio==3){
@@ -52,6 +52,7 @@
       bookings$month <- month(as.Date(bookings$Outward_Journey_Luggage_drop_off_date, format = "%d/%m/%Y"))
       bookings$year <- year(as.Date(bookings$Outward_Journey_Luggage_drop_off_date, format = "%d/%m/%Y"))
       bookings$date  <- as.Date(bookings$Outward_Journey_Luggage_drop_off_date, format = "%d/%m/%Y")
+      bookings$week <- strftime(bookings$date,format="%W")
       bookings$rank  <- as.Date(paste0(bookings$year,'-',bookings$month,'-01'),"%Y-%m-%d")
       
       bookings$Outward_Journey_Luggage_Collection_date <- as.Date(bookings$Outward_Journey_Luggage_Collection_date, format = "%d/%m/%Y")
@@ -71,45 +72,18 @@
 
   # APPLY FILTERING CONDITIONS
     all <- reactive({
-      bookings <- original()
-      bookingsKeep <- bookings
-
-      # allow toggling of showing zero value bookings
-      if(input$showAll == T){
-        bookings <- subset(bookings, Transaction_payment > 0) #exclude promotional or internal deliveries
-      }
-      else{bookings <- subset(bookings, Transaction_payment >= 0)}
-
-      # REPORT MODE OPTION
-      if(input$reportMode==1){
-        bookings <- subset(bookings, date>=range()[1]&date<=range()[2])
-      }
-      else{bookings <- bookingsKeep}
-
-      # filtering by airport
-      # THIS VERSION OF THE FILTER NOW SEEMS TO BE WORKING
-      bookings$filter  <- 
-        (grepl(paste(filter(),collapse="|"),bookings$Outward_Journey_Luggage_collection_location_Name,ignore.case=TRUE)
-          &!grepl("storage",bookings$Outward_Journey_Luggage_collection_location_Name,ignore.case=TRUE)
-        )|(
-        grepl(paste(filter(),collapse="|"),bookings$Outward_Journey_Luggage_drop_off_location_Name,ignore.case=TRUE)
-          &!grepl("storage",bookings$Outward_Journey_Luggage_drop_off_location_Name,ignore.case=TRUE)
-        )|(
-        grepl("storage",bookings$Outward_Journey_Luggage_collection_location_Name,ignore.case=TRUE)
-          &sum(grepl('Other',filter(),ignore.case=T))
-        )|(
-        grepl("storage",bookings$Outward_Journey_Luggage_drop_off_location_Name,ignore.case=TRUE)
-          &sum(grepl('Other',filter(),ignore.case=T)))
-      bookings <- bookings[bookings$filter == 1,]
-
-      bookings
-
+      bookFilter(original(), filter(), range(), onlyNonZero = input$showAll, rangeMode = input$reportMode)
+      # see function under functions.R
     })
 
 
   # SUMMARIZE BY MONTH (AND YEAR)
     sumMonth <- reactive({
-      sumBookings <- ddply (all(), c("month","year"), summarize, bookings = length(Cancelled), totalBags = sum(Total_luggage_No), meanBags = mean(Total_luggage_No), netRevenue = sum(Transaction_payment)/1.2)
+      sumBookings <- ddply (all(), c("month","year"), summarize, 
+        bookings = length(Cancelled), 
+        totalBags = sum(Total_luggage_No), 
+        meanBags = mean(Total_luggage_No), 
+        netRevenue = sum(Transaction_payment)/1.2)
       sumBookings$meanNetRevenue <- sumBookings$netRevenue/sumBookings$bookings
       sumBookings$monthName  <- month.abb[sumBookings$month] #getting the month name fo plotting purposes
       
@@ -137,7 +111,11 @@
   # SUMMARIZE BY DATE
     sumDate <- reactive({
       # Note that it acts on bookingsRange()
-      sumBookings <- ddply (bookingsRange(), c("date","Outward_Journey_Luggage_drop_off_date"), summarize, bookings = length(Cancelled), totalBags = sum(Total_luggage_No), meanBags = mean(Total_luggage_No), netRevenue = sum(Transaction_payment)/1.2)
+      sumBookings <- ddply (bookingsRange(), c("date","Outward_Journey_Luggage_drop_off_date"), summarize, 
+        bookings = length(Cancelled), 
+        totalBags = sum(Total_luggage_No), 
+        meanBags = mean(Total_luggage_No), 
+        netRevenue = sum(Transaction_payment)/1.2)
       sumBookings$meanNetRevenue <- sumBookings$netRevenue/sumBookings$bookings
       sumBookings$day  <- weekdays(as.Date(sumBookings$Outward_Journey_Luggage_drop_off_date, format = "%d/%m/%Y"))
       sumBookings <- sumBookings[c("date","Outward_Journey_Luggage_drop_off_date","day","bookings","totalBags","meanBags","netRevenue","meanNetRevenue")]
@@ -152,6 +130,7 @@
       timeMax <- range()[2]
       timeMin <- range()[1]
       allDates  <- seq(timeMin,timeMax,by="day")
+      # can easily be swapped to by "week"
       
       allDates.frame <- data.frame(list(date=allDates))
       
@@ -196,8 +175,13 @@
       #   }
       
       # Summarize by customer e-mail
-      reUser.df <- ddply (allData, "customer_email", summarize, bookings = length(Cancelled), totalBags = sum(Total_luggage_No), meanBags = round(mean(Total_luggage_No),digits=1), netRevenue = round(sum(Transaction_payment)/1.2))
-      reUser.df$avgRevenue <- round(reUser.df$netRevenue/reUser.df$bookings, digits=2)
+      reUser.df <- ddply (allData, "customer_email", summarize, 
+        bookings = length(Cancelled), 
+        totalBags = sum(Total_luggage_No), 
+        meanBags = round(mean(Total_luggage_No),digits=1), 
+        netRevenue = round(sum(Transaction_payment)/1.2))
+      reUser.df$avgRevenue <- round(reUser.df$netRevenue/reUser.df$bookings, 
+        digits=2)
       reUser.df <- reUser.df[with(reUser.df,order(-bookings,-avgRevenue)), ]
       reUser.df <- reUser.df[reUser.df$bookings>1,]
       rownames(reUser.df) <- NULL
@@ -212,11 +196,13 @@
         
         bookings <- bookingsRange()
         
-        df <- bookings[bookings$Product_ID_numbers == "AP0002", c("Booking_reference", "Department", "Booking_lead_time", "Hand_luggage_No",
-                                                                  "Hold_luggage_No", "Total_luggage_No","Customer_Firstname","customer_surname","country_origin", "Reason_for_travel",
-                                                                  "Zone", "Outward_Journey_Luggage_drop_off_location_addresss_Postcode", "Outward_Journey_Luggage_drop_off_location_Type",
-                                                                  "Outward_Journey_Luggage_Collection_date", "Outward_Journey_Luggage_Collection_time", "Outward_Journey_Luggage_drop_off_time",
-                                                                  "Transaction_payment","In.bound_flt_code")]
+        df <- bookings[bookings$Product_ID_numbers == "AP0002", 
+          c("Booking_reference", "Department", "Booking_lead_time", "Hand_luggage_No",
+            "Hold_luggage_No", "Total_luggage_No","Customer_Firstname","customer_surname","country_origin", "Reason_for_travel",
+            "Zone", "Outward_Journey_Luggage_drop_off_location_addresss_Postcode", "Outward_Journey_Luggage_drop_off_location_Type",
+            "Outward_Journey_Luggage_Collection_date", "Outward_Journey_Luggage_Collection_time", "Outward_Journey_Luggage_drop_off_time",
+            "Transaction_payment","In.bound_flt_code"
+          )]
         
         merged <- merge(df,InFlights(), all.x=T, by.x = "In.bound_flt_code", by.y = "BA.Flight")
         merged <- merged[with(merged, order(Outward_Journey_Luggage_Collection_date, decreasing = T)),]

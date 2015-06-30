@@ -12,6 +12,13 @@ require(googleVis)
 
 #  can also be used to store global variables, insert them below
 
+# Original Start Dates
+startDate <- list(
+  LCY = "2014-05-22",
+  LGW = "2015-07-15",
+  LHR = "2015-09-01")
+
+# IPs to exclude
 ipExclude <- c(
   '',
   '213.123.58.114',

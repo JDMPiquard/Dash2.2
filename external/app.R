@@ -3,6 +3,9 @@
 #
 
 
+#  source major functions
+source('external/functions.R', local=T)
+
 #  source reactive expressions and other code
 source('external/appSourceFiles/reactives.R', local=T)  #  reactives
 source('external/appSourceFiles/reactKPI.R', local=T)
