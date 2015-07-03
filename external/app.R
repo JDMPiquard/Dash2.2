@@ -90,8 +90,22 @@ source('external/appSourceFiles/outputs/outTimePlots.R',local=T)
   })
   # Download Button
     output$downloadCCnD <- downloadHandler(
-      filename = function() { paste("CCnD",range()[1]," to ",range()[2], '.csv', sep='') },
+      filename = function() { paste("CCnD",range()[1]," to ",range()[2],
+        '.csv', sep='') },
       content = function(file) {
         write.csv(CarouselShort(), file)
+      }
+    )
+
+# LGW EPOS REPORT
+  # Summary Table
+  
+
+  # Download Button
+    output$downloadEPOS <- downloadHandler(
+      filename = function(){paste("eposLGW",range()[1]," to ",range()[2],
+        '.csv', sep='') },
+      content = function(file){
+        write.csv(lgwEPOS(), file)
       }
     )

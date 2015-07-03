@@ -14,7 +14,7 @@ bookFilter <- function(df, airports, range, onlyNonZero = F, rangeMode = F){
   #   rangeMode: if True, also filters data frame by booking date, requires range argument to be set
   #
   # Returns:
-  #   Data frame with only the relevant rows
+  #   Data frame with only the relevant rows. Also adds new "filter" columns to data.frame
   
   # allow toggling of showing zero value bookings
   if(onlyNonZero){
@@ -29,7 +29,7 @@ bookFilter <- function(df, airports, range, onlyNonZero = F, rangeMode = F){
   
   # filtering by airport
   # THIS VERSION OF THE FILTER NOW SEEMS TO BE WORKING
-  df$filter  <- 
+  df$filterCollect  <- 
     (grepl(paste(airports,collapse="|"),  # Find airport names
       df$Outward_Journey_Luggage_collection_location_Name,ignore.case=TRUE)
      &grepl("airportterminal",  # Only accept those marked as airports
@@ -37,22 +37,27 @@ bookFilter <- function(df, airports, range, onlyNonZero = F, rangeMode = F){
      &!grepl("storage",  # Ignore luggage storage options
       df$Outward_Journey_Luggage_collection_location_Name,ignore.case=TRUE)
     )|(
-      grepl(paste(airports,collapse="|"),
-        df$Outward_Journey_Luggage_drop_off_location_Name,ignore.case=TRUE)
-      &grepl("airportterminal",
-        df$Outward_Journey_Luggage_drop_off_location_Type,ignore.case=TRUE)
-      &!grepl("storage",
-        df$Outward_Journey_Luggage_drop_off_location_Name,ignore.case=TRUE)
-    )|(
       grepl("storage",
         df$Outward_Journey_Luggage_collection_location_Name,ignore.case=TRUE)
       &sum(grepl('Other',
         airports,ignore.case=T))
+    )
+  
+  df$filterDrop <- 
+    (
+      grepl(paste(airports,collapse="|"),
+            df$Outward_Journey_Luggage_drop_off_location_Name,ignore.case=TRUE)
+      &grepl("airportterminal",
+             df$Outward_Journey_Luggage_drop_off_location_Type,ignore.case=TRUE)
+      &!grepl("storage",
+              df$Outward_Journey_Luggage_drop_off_location_Name,ignore.case=TRUE)
     )|(
       grepl("storage",
-        df$Outward_Journey_Luggage_drop_off_location_Name,ignore.case=TRUE)
+            df$Outward_Journey_Luggage_drop_off_location_Name,ignore.case=TRUE)
       &sum(grepl('Other',
-        airports,ignore.case=T)))
+                 airports,ignore.case=T)))
+  
+  df$filter <- df$filterDrop|df$filterCollect
 
   df <- df[df$filter == 1,]
   

@@ -24,3 +24,13 @@ ipExclude <- c(
   '213.123.58.114',
   '80.87.25.183',
   '81.144.134.68')
+
+# GAL defined properties (EPOS download only)
+  retailer <- "*AP*"
+  shopCode <- "*ShopCode*"
+  shopText <- "*Shop Text*"
+  # the following will be product dependent
+  catCode <- "*advised by GAL - Product Dependent*"
+  catText <- "*advised by GAL - Product Dependent*"
+  subCatCode <- "*advised by GAL - Product Dependent*"
+  subCatText <- "*advised by GAL - Product Dependent*"

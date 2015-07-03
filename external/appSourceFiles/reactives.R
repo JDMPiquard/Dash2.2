@@ -52,10 +52,21 @@
       bookings$month <- month(as.Date(bookings$Outward_Journey_Luggage_drop_off_date, format = "%d/%m/%Y"))
       bookings$year <- year(as.Date(bookings$Outward_Journey_Luggage_drop_off_date, format = "%d/%m/%Y"))
       bookings$date  <- as.Date(bookings$Outward_Journey_Luggage_drop_off_date, format = "%d/%m/%Y")
-      bookings$week <- strftime(bookings$date,format="%W")
+      bookings$week <- strftime(bookings$date,format="%Y %W")
       bookings$rank  <- as.Date(paste0(bookings$year,'-',bookings$month,'-01'),"%Y-%m-%d")
       
       bookings$Outward_Journey_Luggage_Collection_date <- as.Date(bookings$Outward_Journey_Luggage_Collection_date, format = "%d/%m/%Y")
+
+      # cleaning up times
+      bookings$Booking_time <- strftime(
+        strptime(as.character(bookings$Booking_time), format="%H:%M:%S"),"%H:%M:%S")
+      bookings$Outward_Journey_Luggage_Collection_time <- strftime(
+        strptime(bookings$Outward_Journey_Luggage_Collection_time, format="%H:%M"),"%H:%M:%S")
+
+      bookings$transactionTime <- ifelse(
+        bookings$Department=="roll up",
+        bookings$Booking_time,
+        bookings$Outward_Journey_Luggage_Collection_time)   
       
       # Cleaning up postCodes
       bookings$from <- as.character(bookings$Outward_Journey_Luggage_collection_location_addresss_Postcode)
@@ -131,6 +142,7 @@
       timeMin <- range()[1]
       allDates  <- seq(timeMin,timeMax,by="day")
       # can easily be swapped to by "week"
+      # allDates  <- seq(timeMin,timeMax,by="week")
       
       allDates.frame <- data.frame(list(date=allDates))
       
@@ -240,15 +252,53 @@
     })
      
 
-    # lgwEPOS <- reactive({
-    #   data <- bookingsRange()
-    #   l <- length(data$Cancelled)
+    lgwEPOS <- reactive({
+      bookings <- original()
+      dates <- range()
 
-    # Retailer <- matrix(ncol=1,nrow=l)
-    # Retailer <- "AP"
+      bookLGW <- bookFilter(bookings,"Gatwick",dates,onlyNonZero=T,rangeMode=T)
 
+      # CLEAN UP
+      # finding the correct flights
+      bookLGW$flightLGW <- ifelse(bookLGW$filterCollect,
+       bookLGW$In.bound_flt_code,
+       bookLGW$Out.bound_flt_code)
+      # converting time and date to necessary format
+      bookLGW$transactionTime <- strftime(strptime(bookLGW$transactionTime, format="%H:%M:%S"), "%H%M%S")
+      bookLGW$date <- strftime(strptime(bookLGW$date,format="%Y-%m-%d"),"%Y%m%d")
+      
+      l <- length(bookLGW$Cancelled)
+      # initial strings
+      info1 <- as.data.frame(matrix(nrow=l,ncol=2))
+      info1[,1] <- retailer
+      info1[,2] <- shopCode
+      info1[,3] <- shopText
+      names(info1) <- c("Retailer","Shop Code","Shop Text")
 
+      # initial data
+      data1 <- bookLGW[,c("date","transactionTime","Booking_reference")]
+      names(data1) <- c("Transaction Date","Transaction Time","Transaction ID")
 
-    #   df <- bookings[, c()]
-    # })
+      # second set of strings
+      info2 <- as.data.frame(matrix(nrow=l,ncol=2))
+      info2[,1] <- catCode
+      info2[,2] <- catText
+      names(info2) <- c("Category Code", "Category Text")
+
+      # second set of data
+      data2 <- bookLGW[,c("Transaction_payment","Total_product_number","flightLGW","Product_ID_numbers","Product_name")]
+      names(data2) <- c("Net Value","Quantity","Flight Number","Product Code","Product Text")
+
+      # third set of strings
+      info3 <- as.data.frame(matrix(nrow=l,ncol=2))
+      info3[,1] <- subCatCode
+      info3[,2] <- subCatText
+      names(info3) <- c("Sub Category Code", "Sub Category Text")
+
+      # combine columns
+      lgwEposReport <- cbind(info1,data1,info2,data2,info3)
+      rownames(lgwEposReport) <- NULL
+
+      lgwEposReport
+    })
 

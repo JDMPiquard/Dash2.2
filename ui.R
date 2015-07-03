@@ -48,7 +48,7 @@ shinyUI(fluidPage(
       	source("uiComponents/TabStatistics.R",local=T)$value                    
       ),
    
-      #  TAB 3: Produt Statistics
+      #  TAB 3: Produt Statistics & Downloads
       tabPanel('Download Summaries and Reports',
       	source("uiComponents/TabProdStats.R",local=T)$value
       )
