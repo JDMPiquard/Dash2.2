@@ -99,7 +99,7 @@ source('external/appSourceFiles/outputs/outTimePlots.R',local=T)
 
 # LGW EPOS REPORT
   # Summary Table
-  
+
 
   # Download Button
     output$downloadEPOS <- downloadHandler(
@@ -107,5 +107,18 @@ source('external/appSourceFiles/outputs/outTimePlots.R',local=T)
         '.csv', sep='') },
       content = function(file){
         write.csv(lgwEPOS(), file)
+      }
+    )
+
+# Debug REPORT
+  # Summary Table
+
+
+  # Download Button
+    output$downloadDEBUG <- downloadHandler(
+      filename = function(){paste("bookingsDebug",paste(filter(),sep='-'),range()[1]," to ",range()[2],
+        '.csv', sep='') },
+      content = function(file){
+        write.csv(bookingsRange(), file)
       }
     )

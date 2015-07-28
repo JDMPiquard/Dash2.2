@@ -46,17 +46,36 @@
       
       # start cleaning up data
       colnames(bookings)[1] <- "Booking_reference"  # Seems to solve corrupted header name
-      
+
+      #clean up dates
+      bookings$Outward_Journey_Luggage_Collection_date <- as.Date(bookings$Outward_Journey_Luggage_Collection_date, format = "%d/%m/%Y")
+      bookings$Outward_Journey_Luggage_drop_off_date  <- as.Date(bookings$Outward_Journey_Luggage_drop_off_date, format = "%d/%m/%Y")
+      bookings$Return_Journey_Luggage_Collection_date <- as.Date(bookings$Return_Journey_Luggage_Collection_date, format = "%d/%m/%Y")
+      bookings$Return_Journey_Luggage_drop_off_date  <- as.Date(bookings$Return_Journey_Luggage_drop_off_date, format = "%d/%m/%Y")
+      # define the reporting date > this is the main date bookings are reported in
+      # Simple option: always use outward journey drop-off date
+        # bookings$date <- bookings$Outward_Journey_Luggage_drop_off_date
+      # Original LCY reporting versiont: use luggage collection date
+        #bookings$date2 <- array(dim=length(bookings$Cancelled))
+        bookings$date <- ifelse(
+          bookings$Single_return=="OneWay",
+          bookings$Outward_Journey_Luggage_Collection_date,
+          bookings$Return_Journey_Luggage_Collection_date)
+        # bookings$date <- strftime(
+        #   as.Date(bookings$date, origin="1970-01-01"),
+        #   format="%d/%m/%Y")
+        bookings$date <- as.Date(bookings$date, origin="1970-01-01")
+      # Alternative option: discern between OneWay and Return bookings
+      # Add return legs as additional rows
+        # NOT YET IMPLEMENTED
+
       # remember conversion into date, considering format
-      bookings$day <- weekdays(as.Date(bookings$Outward_Journey_Luggage_drop_off_date, format = "%d/%m/%Y"))
-      bookings$month <- month(as.Date(bookings$Outward_Journey_Luggage_drop_off_date, format = "%d/%m/%Y"))
-      bookings$year <- year(as.Date(bookings$Outward_Journey_Luggage_drop_off_date, format = "%d/%m/%Y"))
-      bookings$date  <- as.Date(bookings$Outward_Journey_Luggage_drop_off_date, format = "%d/%m/%Y")
+      bookings$day <- weekdays(bookings$date)
+      bookings$month <- month(bookings$date)
+      bookings$year <- year(bookings$date)
       bookings$week <- strftime(bookings$date,format="%Y %W")
       bookings$rank  <- as.Date(paste0(bookings$year,'-',bookings$month,'-01'),"%Y-%m-%d")
       
-      bookings$Outward_Journey_Luggage_Collection_date <- as.Date(bookings$Outward_Journey_Luggage_Collection_date, format = "%d/%m/%Y")
-
       # cleaning up times
       bookings$Booking_time <- strftime(
         strptime(as.character(bookings$Booking_time), format="%H:%M:%S"),"%H:%M:%S")
@@ -122,14 +141,14 @@
   # SUMMARIZE BY DATE
     sumDate <- reactive({
       # Note that it acts on bookingsRange()
-      sumBookings <- ddply (bookingsRange(), c("date","Outward_Journey_Luggage_drop_off_date"), summarize, 
+      sumBookings <- ddply (bookingsRange(), c("date"), summarize, 
         bookings = length(Cancelled), 
         totalBags = sum(Total_luggage_No), 
         meanBags = mean(Total_luggage_No), 
         netRevenue = sum(Transaction_payment)/1.2)
       sumBookings$meanNetRevenue <- sumBookings$netRevenue/sumBookings$bookings
-      sumBookings$day  <- weekdays(as.Date(sumBookings$Outward_Journey_Luggage_drop_off_date, format = "%d/%m/%Y"))
-      sumBookings <- sumBookings[c("date","Outward_Journey_Luggage_drop_off_date","day","bookings","totalBags","meanBags","netRevenue","meanNetRevenue")]
+      sumBookings$day  <- weekdays(sumBookings$date)
+      sumBookings <- sumBookings[c("date","day","bookings","totalBags","meanBags","netRevenue","meanNetRevenue")]
       sumBookings <- sumBookings[order(sumBookings$date, decreasing = TRUE),]
     })
 
@@ -153,8 +172,7 @@
       
       sumBookings <- mergeDates
       
-      sumBookings$day  <- weekdays(as.Date(sumBookings$Outward_Journey_Luggage_drop_off_date, format = "%d/%m/%Y"))
-      sumBookings$Outward_Journey_Luggage_drop_off_date <- NULL
+      sumBookings$day  <- weekdays(sumBookings$date)
       sumBookings$meanBags  <- round(sumBookings$meanBags,1)
       sumBookings$netRevenue <- round(sumBookings$netRevenue,2)
       sumBookings$meanNetRevenue <- round(sumBookings$meanNetRevenue,2)

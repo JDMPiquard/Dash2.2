@@ -50,5 +50,23 @@ div(
   #       dataTableOutput(outputId="EPOS")
   #     )
     )
+  ),
+
+  # DOWNLOAD DEBUG REPORTS
+  fluidRow(
+    div(class="statsContainer",
+      p(" "),
+      fluidRow(
+        column(8,
+               h4("Download filtered bookings (DEBUG)")),
+        column(4,
+               downloadButton('downloadDEBUG', 'Download Filtered Bookings'))  #  Download BA report style
+      )
+  
+  
+  #     fluidRow(
+  #       dataTableOutput(outputId="EPOS")
+  #     )
+    )
   )
 )
