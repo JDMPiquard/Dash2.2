@@ -82,7 +82,7 @@ source('external/appSourceFiles/outputs/outTimePlots.R',local=T)
     
     CC <- bookings[, c("Booking_reference", "Hand_luggage_No","Hold_luggage_No",
                        "Total_luggage_No","Customer_Firstname","customer_surname","country_origin", 
-                       "Outward_Journey_Luggage_Collection_date", "Transaction_payment","In.bound_flt_code","Origin")]
+                       "Outward_Journey_Luggage_Collection_date", "Booking_value_gross_total","In.bound_flt_code","Origin")]
     rownames(CC) <- NULL
     names(CC) <- c("Booking","Hand","Hold","Total","Name","Surname","Nat","Date","Value","Flight","Origin")
     
@@ -99,14 +99,17 @@ source('external/appSourceFiles/outputs/outTimePlots.R',local=T)
 
 # LGW EPOS REPORT
   # Summary Table
-
+	output$EPOS <- renderDataTable({
+	  if (is.null(ready())) return(NULL)
+	  lgwEPOS()
+	}, options = list(pageLength = 5))
 
   # Download Button
     output$downloadEPOS <- downloadHandler(
       filename = function(){paste("eposLGW",range()[1]," to ",range()[2],
-        '.csv', sep='') },
+        '.csv') },
       content = function(file){
-        write.csv(lgwEPOS(), file)
+        write.table(lgwEPOS(), file, sep='|', row.names=F)
       }
     )
 

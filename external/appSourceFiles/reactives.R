@@ -102,7 +102,7 @@
 
   # APPLY FILTERING CONDITIONS
     all <- reactive({
-      bookFilter(original(), filter(), range(), onlyNonZero = input$showAll, rangeMode = input$reportMode)
+      bookFilter(original(), filter(), range(), onlyNonZero = input$showAll, rangeMode = input$reportMode, excludeInternal = input$exclInternal)
       # see function under functions.R
     })
 
@@ -113,7 +113,7 @@
         bookings = length(Cancelled), 
         totalBags = sum(Total_luggage_No), 
         meanBags = mean(Total_luggage_No), 
-        netRevenue = sum(Transaction_payment)/1.2)
+        netRevenue = sum(Booking_value_gross_total)/1.2)
       sumBookings$meanNetRevenue <- sumBookings$netRevenue/sumBookings$bookings
       sumBookings$monthName  <- month.abb[sumBookings$month] #getting the month name fo plotting purposes
       
@@ -145,7 +145,7 @@
         bookings = length(Cancelled), 
         totalBags = sum(Total_luggage_No), 
         meanBags = mean(Total_luggage_No), 
-        netRevenue = sum(Transaction_payment)/1.2)
+        netRevenue = sum(Booking_value_gross_total)/1.2)
       sumBookings$meanNetRevenue <- sumBookings$netRevenue/sumBookings$bookings
       sumBookings$day  <- weekdays(sumBookings$date)
       sumBookings <- sumBookings[c("date","day","bookings","totalBags","meanBags","netRevenue","meanNetRevenue")]
@@ -209,7 +209,7 @@
         bookings = length(Cancelled), 
         totalBags = sum(Total_luggage_No), 
         meanBags = round(mean(Total_luggage_No),digits=1), 
-        netRevenue = round(sum(Transaction_payment)/1.2))
+        netRevenue = round(sum(Booking_value_gross_total)/1.2))
       reUser.df$avgRevenue <- round(reUser.df$netRevenue/reUser.df$bookings, 
         digits=2)
       reUser.df <- reUser.df[with(reUser.df,order(-bookings,-avgRevenue)), ]
@@ -231,7 +231,7 @@
             "Hold_luggage_No", "Total_luggage_No","Customer_Firstname","customer_surname","country_origin", "Reason_for_travel",
             "Zone", "Outward_Journey_Luggage_drop_off_location_addresss_Postcode", "Outward_Journey_Luggage_drop_off_location_Type",
             "Outward_Journey_Luggage_Collection_date", "Outward_Journey_Luggage_Collection_time", "Outward_Journey_Luggage_drop_off_time",
-            "Transaction_payment","In.bound_flt_code"
+            "Booking_value_gross_total","In.bound_flt_code"
           )]
         
         merged <- merge(df,InFlights(), all.x=T, by.x = "In.bound_flt_code", by.y = "BA.Flight")
@@ -248,7 +248,7 @@
                          "Hold_luggage_No", "Total_luggage_No","Customer_Firstname","customer_surname","country_origin", "Reason_for_travel",
                          "Zone", "Outward_Journey_Luggage_drop_off_location_addresss_Postcode", "Outward_Journey_Luggage_drop_off_location_Type",
                          "Outward_Journey_Luggage_Collection_date", "Outward_Journey_Luggage_Collection_time", "Outward_Journey_Luggage_drop_off_time",
-                         "Transaction_payment","In.bound_flt_code","Origin")]
+                         "Booking_value_gross_total","In.bound_flt_code","Origin")]
     })
 
   # POPULAR IP ADDRESSES
@@ -274,7 +274,7 @@
       bookings <- original()
       dates <- range()
 
-      bookLGW <- bookFilter(bookings,"Gatwick",dates,onlyNonZero=T,rangeMode=T)
+      bookLGW <- bookFilter(bookings,"Gatwick",dates,onlyNonZero=F,rangeMode=T, excludeInternal=T)
 
       # CLEAN UP
       # finding the correct flights
@@ -304,7 +304,8 @@
       names(info2) <- c("Category Code", "Category Text")
 
       # second set of data
-      data2 <- bookLGW[,c("Transaction_payment","Total_product_number","flightLGW","Product_ID_numbers","Product_name")]
+      data2 <- bookLGW[,c("Booking_value_gross_total","Total_product_number","flightLGW","Product_ID_numbers","Product_name")]
+      data2$Booking_value_gross_total = data2$Booking_value_gross_total/1.2
       names(data2) <- c("Net Value","Quantity","Flight Number","Product Code","Product Text")
 
       # third set of strings

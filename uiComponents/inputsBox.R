@@ -19,7 +19,7 @@ div(
   #  TOP INPUT BOX
   div(class="topBox",
     fluidRow(
-      column(6,
+      column(7,
         fluidRow(
           column(11,
             fluidRow(
@@ -35,17 +35,20 @@ div(
         ),
         fluidRow(  #  Report mode checkbox - filters out irrelevant stuff
           h6("Reporting options"),
-          column(6,
-            checkboxInput("reportMode", label="activate report mode")
+          column(4,
+            checkboxInput("reportMode", label="report mode")
           ),
-          column(6,
-            checkboxInput("showAll", label = "exclude 0GBP bookings", value = F)
+          column(4,
+            checkboxInput("showAll", label = "nonZero only", value = F)
+          ),
+          column(4,
+            checkboxInput("exclInternal", label = "Exclude Internal", value = T)
           )
         )
       ),
           
           
-      column(6,
+      column(5,
         column(4,
           checkboxGroupInput("checkAirport", label= "filter by airport",
                                            choices = c("LHR", "LGW", "LCY", "STN", "Storage"),
@@ -53,7 +56,7 @@ div(
         ),
         column(8,  
           fluidRow(
-            radioButtons("radio", label = "analysis mode (date selection)",
+            radioButtons("radio", label = "select dates",
                                        choices = list("All Time" = 1, "Date Range" = 2, "Today Only" = 3), 
                                        selected = 2)
             ),

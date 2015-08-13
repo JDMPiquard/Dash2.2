@@ -43,12 +43,12 @@ div(
                h4("LGW EPOS Report")),
         column(4,
                downloadButton('downloadEPOS', 'Download EPOS report'))  #  Download BA report style
+      ),
+  
+  
+      fluidRow(
+        dataTableOutput(outputId="EPOS")
       )
-  
-  
-  #     fluidRow(
-  #       dataTableOutput(outputId="EPOS")
-  #     )
     )
   ),
 

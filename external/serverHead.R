@@ -12,10 +12,16 @@ require(googleVis)
 
 #  can also be used to store global variables, insert them below
 
+# Expressions to exclude in "excludeInternal"
+internalAddresses <- c(
+  "Portr HQ", 
+  "Portr Limited",
+  "Portr Ltd")
+
 # Original Start Dates
 startDate <- list(
   LCY = "2014-05-22",
-  LGW = "2015-07-15",
+  LGW = "2015-07-23",
   LHR = "2015-09-01")
 
 # IPs to exclude
@@ -30,7 +36,7 @@ ipExclude <- c(
   shopCode <- "*ShopCode*"
   shopText <- "*Shop Text*"
   # the following will be product dependent
-  catCode <- "*advised by GAL - Product Dependent*"
-  catText <- "*advised by GAL - Product Dependent*"
-  subCatCode <- "*advised by GAL - Product Dependent*"
-  subCatText <- "*advised by GAL - Product Dependent*"
+  catCode <- "*catCode*"
+  catText <- "*catText*"
+  subCatCode <- "*subCatCode*"
+  subCatText <- "*subCatText*"
