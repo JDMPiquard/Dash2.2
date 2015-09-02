@@ -129,7 +129,7 @@ bookFilter <- function(df, airports, range, onlyNonZero = F, rangeMode = F, excl
 }
 
 #  SUMMARIZE FUNCTION
-summarizeMI <- function(df, index){
+summarizeMI <- function(df, index, pretty = F){
   # applies ddply, summarizing df over index
   #
   # Args:
@@ -147,9 +147,22 @@ summarizeMI <- function(df, index){
     promoDiscounts = -(sum(Booking_value_total_promotional_discount) + sum(AirPortr_user_booking_value_price_adjustment)),
     otherDiscounts = -(-sum(AirPortr_user_booking_value_price_adjustment) + sum(Transaction_payment_credit))
   )
-  temp$meanNetRevenue <- temp$netRevenue/temp$bookings
+  temp$meanNetRevenue <- round(temp$netRevenue/temp$bookings, digits = 2)
   temp$meanGrossRevenue <- round(temp$meanNetRevenue*1.2, digits = 2)
 
+  if (pretty){  # cleans up temp into a compact data frame for use with summary tables
+    temp <- temp[c(index,"bookings","totalBags","meanBags","netRevenue","promoDiscounts","meanGrossRevenue")]
+    temp$netRevenue <- sapply(temp$netRevenue*1.2,toCurrency)
+    temp$promoDiscounts <- sapply(temp$promoDiscounts,toCurrency)
+    #temp$meanGrossRevenue <- sapply(temp$meanGrossRevenue,toCurrency)
+
+    # use shorter names for a more compact table
+    colnames(temp) <- c(index,"bkgs","bags","avgBag","Revenue","promos","avgRevenue")
+
+    # reorder according to relevance
+    temp <- temp[with(temp,order(-bkgs,-avgRevenue)), ]
+    rownames(temp) <- NULL
+  }
   
   return(temp)
 }
@@ -157,6 +170,8 @@ summarizeMI <- function(df, index){
 # PRETTIFY CURRENCY NUMBERS 
 toCurrency <- function(num, currency = 'GBP', compact=T, round=2){
   
+  if (is.null(ready())) return('...')
+
   # Determine the currency format
   if (currency == 'GBP'){
     pre <- '£'

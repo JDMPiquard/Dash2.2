@@ -90,5 +90,21 @@ div(
     div(class="statsContainer",
       dataTableOutput(outputId="outFlights")
     )
+  ),
+
+  #TABLE: Inbound Airlines
+  fluidRow(
+    h4("Most Popular Airlines (inbound)"),
+    div(class="statsContainer",
+      dataTableOutput(outputId="inAirlines")
+    )
+  ),
+
+  #TABLE: Outbound Flights
+  fluidRow(
+    h4("Most Popular Airlines (outbound)"),
+    div(class="statsContainer",
+      dataTableOutput(outputId="outAirlines")
+    )
   )
 )

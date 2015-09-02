@@ -73,8 +73,28 @@ source('external/appSourceFiles/outputs/outTimePlots.R',local=T)
     
   }, options = list(pageLength = 10))
 
-# CC&D BOOKINGS (Tab 3)
-  # TABLE
+# SUMMARY REPORTS (Tab 3)
+  
+  # A.C.E. PERFORMANCE REPORTS
+  
+
+  output$ACE <- renderDataTable({
+    if (is.null(ready())) return(NULL)
+
+    ACE <- summarizeMI(bookingsRange(), "User_name", pretty=T)
+
+  }, options = list(pageLength = 10))
+
+  output$downloadACE <- downloadHandler(
+
+    filename = function() { paste("ACE Report",range()[1]," to ",range()[2],
+        '.csv', sep='') },
+    content = function(file) {
+        write.csv(summarizeMI(bookingsRange(), "User_name", pretty=T), file)
+      }
+    )
+
+  # CC&D TABLE
   output$CCnD <- renderDataTable({
     if (is.null(ready())) return(NULL)
     
@@ -125,3 +145,4 @@ source('external/appSourceFiles/outputs/outTimePlots.R',local=T)
         write.csv(bookingsRange(), file)
       }
     )
+

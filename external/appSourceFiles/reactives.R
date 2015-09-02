@@ -97,6 +97,8 @@
       bookings$In.bound_flt_code  <- toupper(bookings$In.bound_flt_code)
       bookings$Out.bound_flt_code <- gsub(" ", "", bookings$Out.bound_flt_code, fixed = TRUE)
       bookings$Out.bound_flt_code  <- toupper(bookings$Out.bound_flt_code)
+      bookings$inAirline <- substring(bookings$In.bound_flt_code,1,2)
+      bookings$outAirline <- substring(bookings$Out.bound_flt_code,1,2)
       
       bookings
     })
@@ -221,7 +223,7 @@
       #   }
       
       # Summarize by customer e-mail
-      reUser.df <- summarizeMI(bookingsRange(), "customer_email")
+      reUser.df <- summarizeMI(bookingsRange(), "customer_email",pretty=T)
       # reUser.df <- ddply (allData, "customer_email", summarize, 
       #   bookings = length(Cancelled), 
       #   totalBags = sum(Total_luggage_No), 
@@ -229,9 +231,9 @@
       #   netRevenue = round(sum(Booking_value_gross_total)/1.2))
       #reUser.df$avgRevenue <- round(reUser.df$netRevenue/reUser.df$bookings, 
       #  digits=2)
-      reUser.df <- reUser.df[with(reUser.df,order(-bookings,-meanGrossRevenue)), ]
-      reUser.df <- reUser.df[reUser.df$bookings>1,]
-      rownames(reUser.df) <- NULL
+      #reUser.df <- reUser.df[with(reUser.df,order(-bkgs,-meanGrossRevenue)), ]
+      reUser.df <- reUser.df[reUser.df$bkgs>1,]
+      #rownames(reUser.df) <- NULL
       
       reUser.df
     })

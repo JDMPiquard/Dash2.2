@@ -4,6 +4,25 @@
 
 
 div(
+
+  # TOP PERFORMER REPORTS
+  fluidRow(
+    div(class="statsContainer",
+      p(" "),
+      fluidRow(
+        column(8,
+               h4("Top A.C.E. Report")),
+        column(4,
+               downloadButton('downloadACE', 'Download A.C.E. report'))  #  Download BA report style
+      ),
+  
+  
+      fluidRow(
+        dataTableOutput(outputId="ACE")
+      )
+    )
+  ),
+
   # CC&D Summary Data
   fluidRow(
     div(class="statsContainer",
