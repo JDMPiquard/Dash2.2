@@ -11,8 +11,24 @@ output$X  <- renderText({
   KPI()$bags
 })
 # Gross revenue
-output$Y  <- renderText({
-  paste(round(KPI()$netRevenue*1.2),"GBP")
+output$grossRev  <- renderText({
+  toCurrency(KPI()$netRevenue*1.2, round=0)
+})
+# Net revenue
+output$netRev <- renderText({
+  toCurrency(KPI()$netRevenue, compact=F)
+})
+# Total Poptential Booking Value
+output$bookValue <- renderText({
+  toCurrency(KPI()$potentialBookValue)
+})
+# Other Discounts
+output$bookDiscounts <- renderText({
+  toCurrency(KPI()$otherDiscounts)
+})
+# Promo Discounts
+output$bookPromos <- renderText({
+  toCurrency(KPI()$promoDiscounts)
 })
 # avg bags
 output$mX  <- renderText({

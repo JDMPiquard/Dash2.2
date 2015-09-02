@@ -13,6 +13,7 @@ output$MAIN <- renderGvis({
       height=300,
       series="[{
         type:'bars',
+        isStacked: 'true',
         targetAxisIndex:0
         },{
         type:'line',

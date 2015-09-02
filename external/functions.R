@@ -2,6 +2,58 @@
 # Generic functions for use with MI
 
 
+# Subset by airport
+
+# ISOLATE AND MATCH STORAGE BOOKINGS: Not Complete
+storageMerge <- function(df){
+  # Generates a unique bookings table, combining storage bookings into a single row
+
+  toStorage <- df[
+    (grepl('luggage storage',  # find "Luggage Storage locations"
+      df$Outward_Journey_Luggage_drop_off_location_Name, ignore.case=TRUE)
+      &df$Single_return!="Return")  # exclude Return bookings since  should already be correct
+    ,]
+  rownames(toStorage) <- NULL
+
+  fromStorage <- df[
+    (grepl('luggage storage',
+      df$Outward_Journey_Luggage_collection_location_Name, ignore.case=TRUE)
+      &df$Single_return!="Return")
+    ,]
+  rownames(fromStorage) <- NULL
+
+  # Most definitely not foolproof
+  toStorage$uqID  <- paste(toStorage$Booking_date,
+    toStorage$Outward_Journey_Luggage_drop_off_location_Name,
+    toStorage$Hand_luggage_No,
+    toStorage$Hold_luggage_No)
+  fromStorage$uqID  <- paste(fromStorage$Booking_date,
+    fromStorage$Outward_Journey_Luggage_collection_location_Name,
+    fromStorage$Hand_luggage_No,
+    fromStorage$Hold_luggage_No)
+
+  # 
+  matchStore <- match(toStorage$uqID,fromStorage$uqID)  # find any matches
+  matchNA <- which(is.na(matchStore)) # find the indices of the ones returning NA
+  tempDuplicate <- (duplicated(matchStore)|duplicated(matchStore, fromLast=TRUE))
+  matchDuplicates <- matchStore[tempDuplicate]
+  matchStore <- matchStore[-tempDuplicate]
+
+  # Idea would be to:
+  # - find matches between toStorage and fromStorage
+  # - remove NA and duplicates, and apply different filters to it
+  #   > factors to use for match: 'booking date + storage location + luggage Nos', pax e-mail, pax name, calculate total number of matches for each 
+  # - use the cleaned version of the above to find which bookings refer to each Other
+  # - refactor list with new collection and delivery dates
+
+  # >> this can then be used to
+  # - identify booking as storage
+  # - calculate correct transaction value
+  # - calculate average number of days in storage
+  # etc.
+
+}
+
 # MAIN FILTER FUNCTION
 bookFilter <- function(df, airports, range, onlyNonZero = F, rangeMode = F, excludeInternal = F){
   # Subsets data frame by airport and booking dates (optional)
@@ -9,7 +61,7 @@ bookFilter <- function(df, airports, range, onlyNonZero = F, rangeMode = F, excl
   # Args:
   #   df: MI data.frame, may require to be cleaned up
   #   airports: vector of airports to show (a string may be used if only one airport is required)
-  #   range: optional vector with dates range to show (only used if Range is set)
+  #   range: optional vector with dates range to show (only used if rangeMode is set to True)
   #   onlyNonZero: if True, only shows bookings with value above zero
   #   rangeMode: if True, also filters data frame by booking date, requires range argument to be set
   #
@@ -77,4 +129,64 @@ bookFilter <- function(df, airports, range, onlyNonZero = F, rangeMode = F, excl
 }
 
 #  SUMMARIZE FUNCTION
+summarizeMI <- function(df, index){
+  # applies ddply, summarizing df over index
+  #
+  # Args:
+  #
+  # Returns:
+  # 
+  # Note that totalDiscounts was disabled since its value is non reliable
 
+
+  temp <- ddply(df, index, summarize,
+    bookings = length(Cancelled), 
+    totalBags = sum(Total_luggage_No), 
+    meanBags = round(mean(Total_luggage_No),digits=1), 
+    netRevenue = round((sum(Booking_value_gross_total) - sum(Transaction_payment_credit))/1.2, digits=2),
+    promoDiscounts = -(sum(Booking_value_total_promotional_discount) + sum(AirPortr_user_booking_value_price_adjustment)),
+    otherDiscounts = -(-sum(AirPortr_user_booking_value_price_adjustment) + sum(Transaction_payment_credit))
+  )
+  temp$meanNetRevenue <- temp$netRevenue/temp$bookings
+  temp$meanGrossRevenue <- round(temp$meanNetRevenue*1.2, digits = 2)
+
+  
+  return(temp)
+}
+
+# PRETTIFY CURRENCY NUMBERS 
+toCurrency <- function(num, currency = 'GBP', compact=T, round=2){
+  
+  # Determine the currency format
+  if (currency == 'GBP'){
+    pre <- '£'
+    suf <- ' GBP'
+  }
+  else {
+    pre <- '$'
+    suf <- paste(' ', currency, collapse = '')
+  }
+
+  # Determine how it should be formatted
+  if (compact){
+    pre <- pre
+    suf <- ''
+  }
+  else {
+    pre <- ''
+    suf <- suf
+  }
+
+  if(num<0){
+    pre <- paste('-',pre)
+    num <- -1*num
+  }
+
+  # Generate the prettified string
+  paste(pre,
+    format(
+      round(num, round), 
+      big.mark=','),
+    suf, collapse = '')
+
+}

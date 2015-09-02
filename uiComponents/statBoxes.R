@@ -25,8 +25,8 @@ div(
       ),
       
       column(4,
-          div(h2(textOutput("Y")),
-          p("gross revenue (inc. VAT)"),
+          div(h2(textOutput("netRev")),
+          p("net revenue (excl. VAT)"),
           class = "box")
       )
     ),
@@ -37,7 +37,45 @@ div(
       )
     ),
     
-    # SECONDARY BOXES
+    # SECONDARY FINANCIAL BOXES
+    fluidRow(
+      column(3,
+        div(
+          h4(textOutput("bookValue")),
+          p("total gross value of bookings"),
+          class = "minibox")
+      ),
+      
+      column(3,
+        div(
+          h4(textOutput("bookPromos")),
+          p("promo discounts"),
+          class = "minibox")
+      ),
+      
+      column(3,
+        div(
+          h4(textOutput("bookDiscounts")),
+          p("other price adjustments"),
+          class = "minibox")
+      ),
+
+      column(3,
+        div(
+          h4(textOutput("grossRev")),
+          p("gross revenue (inc. VAT)"),
+          class = "minibox")
+      )
+        
+    ),
+
+    fluidRow(
+      div(style='margin=5px',
+        p(' ')
+      )
+    ),
+    
+    # TERTIARY BOXES
     fluidRow(
       column(2,
         div(
@@ -74,7 +112,7 @@ div(
           class = "minibox")
       ),
       
-      # Careful, the following is hard coded
+      # Careful, the following is still being tested
       column(2,
         div(
           h4(textOutput("preBookTime")),

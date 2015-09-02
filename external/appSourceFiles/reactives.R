@@ -82,6 +82,7 @@
       bookings$Outward_Journey_Luggage_Collection_time <- strftime(
         strptime(bookings$Outward_Journey_Luggage_Collection_time, format="%H:%M"),"%H:%M:%S")
 
+      # define transaction time
       bookings$transactionTime <- ifelse(
         bookings$Department=="roll up",
         bookings$Booking_time,
@@ -109,12 +110,14 @@
 
   # SUMMARIZE BY MONTH (AND YEAR)
     sumMonth <- reactive({
-      sumBookings <- ddply (all(), c("month","year"), summarize, 
-        bookings = length(Cancelled), 
-        totalBags = sum(Total_luggage_No), 
-        meanBags = mean(Total_luggage_No), 
-        netRevenue = sum(Booking_value_gross_total)/1.2)
-      sumBookings$meanNetRevenue <- sumBookings$netRevenue/sumBookings$bookings
+      # sumBookings <- ddply (all(), c("month","year"), summarize, 
+      #   bookings = length(Cancelled), 
+      #   totalBags = sum(Total_luggage_No), 
+      #   meanBags = mean(Total_luggage_No), 
+      #   netRevenue = sum(Booking_value_gross_total)/1.2)
+
+      sumBookings <- summarizeMI(all(), c("month", "year"))
+      #sumBookings$meanNetRevenue <- sumBookings$netRevenue/sumBookings$bookings
       sumBookings$monthName  <- month.abb[sumBookings$month] #getting the month name fo plotting purposes
       
       #sumBookings$order  <- paste0(sumBookings$year,'-',sumBookings$month,'-01'),"%Y-%m-%d")
@@ -132,6 +135,18 @@
         
       })
 
+
+# trying  functions!!!!
+    sumCum2 <- reactive({
+      sumBookings <- summarizeMI(all(), c("month","year","Airport"))
+      sumBookings$monthName  <- month.abb[sumBookings$month] #getting the month name fo plotting purposes
+      
+      sumBookings$rank  <- as.Date(paste0(sumBookings$year,'-',sumBookings$month,'-01'),"%Y-%m-%d")
+      sumBookings <- sumBookings[order(sumBookings$rank),]
+      sumBookings  <- within(sumBookings, cum  <- cumsum(netRevenue)) #calculating cummulatives
+        
+    })
+
   # SUBSET BOOKINGS WITHIN INPUT DATE RANGE
     bookingsRange  <- reactive({
       bookings  <- all()
@@ -141,14 +156,15 @@
   # SUMMARIZE BY DATE
     sumDate <- reactive({
       # Note that it acts on bookingsRange()
-      sumBookings <- ddply (bookingsRange(), c("date"), summarize, 
-        bookings = length(Cancelled), 
-        totalBags = sum(Total_luggage_No), 
-        meanBags = mean(Total_luggage_No), 
-        netRevenue = sum(Booking_value_gross_total)/1.2)
-      sumBookings$meanNetRevenue <- sumBookings$netRevenue/sumBookings$bookings
+      sumBookings <- summarizeMI(bookingsRange(), c("date"))
+      # sumBookings <- ddply (bookingsRange(), c("date"), summarize, 
+      #   bookings = length(Cancelled), 
+      #   totalBags = sum(Total_luggage_No), 
+      #   meanBags = mean(Total_luggage_No), 
+      #   netRevenue = sum(Booking_value_gross_total)/1.2)
+      # sumBookings$meanNetRevenue <- sumBookings$netRevenue/sumBookings$bookings
       sumBookings$day  <- weekdays(sumBookings$date)
-      sumBookings <- sumBookings[c("date","day","bookings","totalBags","meanBags","netRevenue","meanNetRevenue")]
+      sumBookings <- sumBookings[c("date","day","bookings","totalBags","meanBags","netRevenue","meanNetRevenue","promoDiscounts","otherDiscounts")]
       sumBookings <- sumBookings[order(sumBookings$date, decreasing = TRUE),]
     })
 
@@ -205,14 +221,15 @@
       #   }
       
       # Summarize by customer e-mail
-      reUser.df <- ddply (allData, "customer_email", summarize, 
-        bookings = length(Cancelled), 
-        totalBags = sum(Total_luggage_No), 
-        meanBags = round(mean(Total_luggage_No),digits=1), 
-        netRevenue = round(sum(Booking_value_gross_total)/1.2))
-      reUser.df$avgRevenue <- round(reUser.df$netRevenue/reUser.df$bookings, 
-        digits=2)
-      reUser.df <- reUser.df[with(reUser.df,order(-bookings,-avgRevenue)), ]
+      reUser.df <- summarizeMI(bookingsRange(), "customer_email")
+      # reUser.df <- ddply (allData, "customer_email", summarize, 
+      #   bookings = length(Cancelled), 
+      #   totalBags = sum(Total_luggage_No), 
+      #   meanBags = round(mean(Total_luggage_No),digits=1), 
+      #   netRevenue = round(sum(Booking_value_gross_total)/1.2))
+      #reUser.df$avgRevenue <- round(reUser.df$netRevenue/reUser.df$bookings, 
+      #  digits=2)
+      reUser.df <- reUser.df[with(reUser.df,order(-bookings,-meanGrossRevenue)), ]
       reUser.df <- reUser.df[reUser.df$bookings>1,]
       rownames(reUser.df) <- NULL
       
