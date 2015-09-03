@@ -82,12 +82,18 @@
         strptime(as.character(bookings$Booking_time), format="%H:%M:%S"),"%H:%M:%S")
       bookings$Outward_Journey_Luggage_Collection_time <- strftime(
         strptime(bookings$Outward_Journey_Luggage_Collection_time, format="%H:%M"),"%H:%M:%S")
+      bookings$Outward_Journey_Luggage_drop_off_time <- strftime(
+        strptime(bookings$Outward_Journey_Luggage_drop_off_time, format="%H:%M"),"%H:%M:%S")
 
       # define transaction time
+      # ISSUE!!
       bookings$transactionTime <- ifelse(
         bookings$Department=="roll up",
         bookings$Booking_time,
-        bookings$Outward_Journey_Luggage_Collection_time)   
+        ifelse(bookings$Journey_direction=="AirportToGeneralLocation",
+          bookings$Outward_Journey_Luggage_Collection_time,
+          bookings$Outward_Journey_Luggage_drop_off_time)
+      )  
       
       # Cleaning up postCodes
       bookings$from <- as.character(bookings$Outward_Journey_Luggage_collection_location_addresss_Postcode)
@@ -106,7 +112,8 @@
 
   # APPLY FILTERING CONDITIONS
     all <- reactive({
-      bookFilter(original(), filter(), range(), onlyNonZero = input$showAll, rangeMode = input$reportMode, excludeInternal = input$exclInternal)
+
+      bookFilter(storageAssign(original()), filter(), range(), onlyNonZero = input$showAll, rangeMode = input$reportMode, excludeInternal = input$exclInternal)
       # see function under functions.R
     })
 
@@ -161,13 +168,23 @@
     })
 
   # GENERATE CONTINUOUS DATA FRAME BY DATE
+
+    # Input checker
+
+
     # For use in day graph
     contDate <- reactive({
       sumBookings <- sumDate()
+
+      # EXPERIMENTAL SECTION FOR INTERACTIVE GRAPH PLOTTING
+      # sumBookings <- summarizeMI(bookingsRange(),
+      #   ifelse(input$graphTimeSelect=="day","date",
+      #     ifelse(input$graphTimeSelect=="week", c("week","year"),NULL)))
       
       timeMax <- range()[2]
       timeMin <- range()[1]
       allDates  <- seq(timeMin,timeMax,by="day")
+      #allDates  <- seq(timeMin,timeMax,by=input$graphTimeSelect)
       # can easily be swapped to by "week"
       # allDates  <- seq(timeMin,timeMax,by="week")
       
@@ -226,14 +243,7 @@
       
       # Summarize by customer e-mail
       reUser.df <- summarizeMI(bookingsRange(), "customer_email",pretty=T)
-      # reUser.df <- ddply (allData, "customer_email", summarize, 
-      #   bookings = length(Cancelled), 
-      #   totalBags = sum(Total_luggage_No), 
-      #   meanBags = round(mean(Total_luggage_No),digits=1), 
-      #   netRevenue = round(sum(Booking_value_gross_total)/1.2))
-      #reUser.df$avgRevenue <- round(reUser.df$netRevenue/reUser.df$bookings, 
-      #  digits=2)
-      #reUser.df <- reUser.df[with(reUser.df,order(-bkgs,-meanGrossRevenue)), ]
+
       reUser.df <- reUser.df[reUser.df$bkgs>1,]
       #rownames(reUser.df) <- NULL
       
@@ -290,7 +300,7 @@
 
     })
      
-
+  # GENERATING GATWICK EPOS REPORT
     lgwEPOS <- reactive({
       bookings <- original()
       dates <- range()

@@ -62,15 +62,8 @@ source('external/appSourceFiles/outputs/outTimePlots.R',local=T)
   output$contents  <- renderDataTable({
     if (is.null(ready())) return(NULL)
     
-    sumBookings  <- contDate()
-    #manipulating for prettyness
-    #   sumBookings$Outward_Journey_Luggage_drop_off_date <- NULL
-    #   sumBookings$meanBags  <- round(sumBookings$meanBags,1)
-    #   sumBookings$netRevenue <- round(sumBookings$netRevenue,2)
-    #   sumBookings$meanNetRevenue <- round(sumBookings$meanNetRevenue,2)
-    
-    sumBookings
-    
+   contDate()
+        
   }, options = list(pageLength = 10))
 
 # SUMMARY REPORTS (Tab 3)
@@ -156,7 +149,7 @@ source('external/appSourceFiles/outputs/outTimePlots.R',local=T)
 
   # Download Button
     output$downloadDEBUG <- downloadHandler(
-      filename = function(){paste("bookingsDebug",paste(filter(),sep='-'),range()[1]," to ",range()[2],
+      filename = function(){paste("bookingsDebug",paste(filter(),collapse="-"),range()[1]," to ",range()[2],
         '.csv', sep='') },
       content = function(file){
         write.csv(bookingsRange(), file)

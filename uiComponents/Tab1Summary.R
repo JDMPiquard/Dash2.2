@@ -3,7 +3,68 @@
 #
 
 div(
+
+  fluidRow(
+      div(style='margin=5px',
+        p(' ')
+      )
+    ),
+    
+  # SECONDARY FINANCIAL BOXES (discounts and promos)
+  fluidRow(
+
+    h6("Financial Breakdown")
+  ),
+  
+  fluidRow(
+
+    column(3,
+      div(
+        h4(textOutput("bookValue")),
+        p("total gross value of bookings"),
+        class = "minibox")
+    ),
+    
+    column(3,
+      div(
+        h4(textOutput("bookPromos")),
+        p("promo discounts"),
+        class = "minibox")
+    ),
+    
+    column(3,
+      div(
+        h4(textOutput("bookDiscounts")),
+        p("other price adjustments"),
+        class = "minibox")
+    ),
+
+    column(3,
+      div(
+        h4(textOutput("grossRev")),
+        p("gross revenue (inc. VAT)"),
+        class = "minibox")
+    )
+      
+  ),
+
+  fluidRow(
+    div(style='margin=5px',
+      p(' ')
+    )
+  ),
+
   # DAY PLOT
+  # # EXPERIMENTAL options
+  # fluidRow(
+  #   column(4,
+  #     selectInput("graphTimeSelect", label = "Select how to display graph", 
+  #       choices = list("day", "week"), 
+  #       selected = "day")
+  #   )
+  # ),
+
+  # Actual Plot
   fluidRow(
     div(style="text-align:center; margin-top:21px",
       htmlOutput("dayPlot")

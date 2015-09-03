@@ -54,6 +54,21 @@ storageMerge <- function(df){
 
 }
 
+# THE FOLLOWING IS CURRENTLY NOT FUNCTIONING
+storageAssign <- function(df){
+  # Temporary function, assigning non-zero value storage bookings to an airport for reporting purposes
+
+  df$Airport <- ifelse(
+    (df$Booking_value_gross_total > 0)
+      &grepl("storage",df$Airport,ignore.case=TRUE),
+    sub("storage","",df$Airport),
+    df$Airport
+  )
+
+  return(df)
+
+}
+
 # MAIN FILTER FUNCTION
 bookFilter <- function(df, airports, range, onlyNonZero = F, rangeMode = F, excludeInternal = F){
   # Subsets data frame by airport and booking dates (optional)
@@ -205,3 +220,6 @@ toCurrency <- function(num, currency = 'GBP', compact=T, round=2){
     suf, collapse = '')
 
 }
+
+# convert names to correct fields helper
+

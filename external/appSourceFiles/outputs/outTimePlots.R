@@ -6,34 +6,25 @@
 output$dayPlot <- renderGvis({
   if (is.null(ready())) return(NULL)
   
-  sumBookings <- sumDate()
-  
-  timeMax <- range()[2]
-  timeMin <- range()[1]
-  allDates  <- seq(timeMin,timeMax,by="day")
-  
-  allDates.frame <- data.frame(list(date=allDates))
-  
-  mergeDates <- merge(allDates.frame,sumBookings,all=T)
-  
-  mergeDates$bookings[which(is.na(mergeDates$bookings))] <- 0
-  mergeDates$netRevenue[which(is.na(mergeDates$netRevenue))] <- 0
-  
-  #df <- mergeDates
   df <- contDate()
   
-  Combo <- gvisComboChart(df, xvar="date",
-                          yvar=c("netRevenue", "bookings"),
-                          #options=list(seriesType="bars",series='{1: {type:"line"}}')
-                          options=list(series="[{
-                                       type:'line', targetAxisIndex:0
-},{
-                                       type:'line', targetAxisIndex:1
-}]",
-                                       vAxes="[{title:'net revenue in GBP'}, {title:'number of bookings'}]",
-                                       title= "daily bookings and net revenue",
-                                       width = 800
-                          )
+  Combo <- gvisComboChart(df, 
+    xvar="date"
+      # ifelse(input$graphTimeSelect=="day","date",
+      #   ifelse(input$graphTimeSelect=="week", "weekStart",NULL))
+      ,
+    yvar=c("netRevenue", "bookings"),
+    #options=list(seriesType="bars",series='{1: {type:"line"}}')
+    options=list(
+      series="[{
+        type:'line', targetAxisIndex:0
+        },{
+        type:'line', targetAxisIndex:1
+        }]",
+      vAxes="[{title:'net revenue in GBP'}, {title:'number of bookings'}]",
+      title= "daily bookings and net revenue",
+      width = 800
+    )
   )
 })
 
