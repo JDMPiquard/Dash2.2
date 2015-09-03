@@ -59,8 +59,8 @@
         #bookings$date2 <- array(dim=length(bookings$Cancelled))
         bookings$date <- ifelse(
           bookings$Single_return=="OneWay",
-          bookings$Outward_Journey_Luggage_Collection_date,
-          bookings$Return_Journey_Luggage_Collection_date)
+          bookings$Outward_Journey_Luggage_drop_off_date,
+          bookings$Return_Journey_Luggage_drop_off_date)
         # bookings$date <- strftime(
         #   as.Date(bookings$date, origin="1970-01-01"),
         #   format="%d/%m/%Y")
@@ -74,6 +74,7 @@
       bookings$month <- month(bookings$date)
       bookings$year <- year(bookings$date)
       bookings$week <- strftime(bookings$date,format="%Y %W")
+      bookings$weekStart <- as.Date(strptime(paste(bookings$week,"1"),format="%Y %W %w"), format="%Y %m %d")
       bookings$rank  <- as.Date(paste0(bookings$year,'-',bookings$month,'-01'),"%Y-%m-%d")
       
       # cleaning up times
@@ -112,19 +113,8 @@
 
   # SUMMARIZE BY MONTH (AND YEAR)
     sumMonth <- reactive({
-      # sumBookings <- ddply (all(), c("month","year"), summarize, 
-      #   bookings = length(Cancelled), 
-      #   totalBags = sum(Total_luggage_No), 
-      #   meanBags = mean(Total_luggage_No), 
-      #   netRevenue = sum(Booking_value_gross_total)/1.2)
-
       sumBookings <- summarizeMI(all(), c("month", "year"))
-      #sumBookings$meanNetRevenue <- sumBookings$netRevenue/sumBookings$bookings
       sumBookings$monthName  <- month.abb[sumBookings$month] #getting the month name fo plotting purposes
-      
-      #sumBookings$order  <- paste0(sumBookings$year,'-',sumBookings$month,'-01'),"%Y-%m-%d")
-      
-      #sumBookings <- sumBookings[order(c(sumBookings$year,sumBookings$month)),]
       sumBookings
     })
 
@@ -200,6 +190,18 @@
       sumBookings
       
     })
+
+  # GENERATE SIMPLE AIRPORT REPORT
+  # currently implemented within the table page
+  airportReport <- reactive({
+    if (is.null(ready())) return(NULL)
+
+    airReport.df <- summarizeMI(bookingsRange(), "week", pretty=F)
+    airReport.df$weekdate <- as.Date(strptime(paste(airReport.df$week,"1"),format="%Y %W %w"), format="%Y %m %d")
+    
+    # currently not in use
+
+  })
 
   # GENERATE POPULAR CC&D FLIGHTS DATA TABLE
     # Inbound flight data only, requires CSV file to convert flight codes to destniation names

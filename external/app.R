@@ -74,10 +74,27 @@ source('external/appSourceFiles/outputs/outTimePlots.R',local=T)
   }, options = list(pageLength = 10))
 
 # SUMMARY REPORTS (Tab 3)
+
+  # SIMPLE AIRPORT MONTHLY REPORTS
+  output$airportReport <- renderDataTable({
+    if (is.null(ready())) return(NULL)
+
+    airReport.df <- summarizeMI(bookingsRange(), c("week","weekStart"), pretty=T)
+    #airReport.df$weekdate <- as.Date(strptime(paste(airReport.df$week,"1"),format="%Y %W %w"), format="%Y %m %d")
+    airReport.df
+
+  }, options = list(pageLength = 5))
+
+  output$downloadAirport <- downloadHandler(
+
+    filename = function() { paste(paste(filter(),collapse="-"), "Report",range()[1]," to ",range()[2],
+        '.csv', sep='') },
+    content = function(file) {
+        write.csv(summarizeMI(bookingsRange(), c("week","weekStart"), pretty=F), file)
+      }
+  )
   
   # A.C.E. PERFORMANCE REPORTS
-  
-
   output$ACE <- renderDataTable({
     if (is.null(ready())) return(NULL)
 
@@ -92,7 +109,7 @@ source('external/appSourceFiles/outputs/outTimePlots.R',local=T)
     content = function(file) {
         write.csv(summarizeMI(bookingsRange(), "User_name", pretty=T), file)
       }
-    )
+  )
 
   # CC&D TABLE
   output$CCnD <- renderDataTable({

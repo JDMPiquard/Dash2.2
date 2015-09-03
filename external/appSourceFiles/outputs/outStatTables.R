@@ -5,6 +5,17 @@
 # define default page length for tables
 table.default = 5
 
+# REFERRAL LINKS
+  # Table
+  output$refLink  <- renderDataTable({
+    if (is.null(ready())) return(NULL)
+    
+    # summarize by country of origin
+    ref.df <- summarizeMI(bookingsRange(), "Booking_refferal_source_url", pretty=T)
+    #
+    ref.df
+  }, options = list(pageLength = table.default))
+
 # USER NATIONALITIES
   # Table
   output$nation  <- renderDataTable({

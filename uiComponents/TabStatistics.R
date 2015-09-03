@@ -46,6 +46,14 @@ div(
   
   fluidRow(p(" ")),
   
+  # TABLE: Referral Links
+  fluidRow(
+    h4("Refferral links (not being tracked correctly in MI)"),
+    div(class="statsContainer",
+      dataTableOutput(outputId="refLink")
+    )
+  ),
+
   # TABLE: Nationalities
   fluidRow(
     h4("Main user Nationalities"),
@@ -73,6 +81,22 @@ div(
   ),
 
   fluidRow(p(" ")),
+
+  #TABLE: Inbound Airlines
+  fluidRow(
+    h4("Most Popular Airlines (inbound)"),
+    div(class="statsContainer",
+      dataTableOutput(outputId="inAirlines")
+    )
+  ),
+
+  #TABLE: Outbound Flights
+  fluidRow(
+    h4("Most Popular Airlines (outbound)"),
+    div(class="statsContainer",
+      dataTableOutput(outputId="outAirlines")
+    )
+  ),
   
   #TABLE: Inbound Flights
   fluidRow(
@@ -89,22 +113,6 @@ div(
     h4("Popular Outbound Flights"),
     div(class="statsContainer",
       dataTableOutput(outputId="outFlights")
-    )
-  ),
-
-  #TABLE: Inbound Airlines
-  fluidRow(
-    h4("Most Popular Airlines (inbound)"),
-    div(class="statsContainer",
-      dataTableOutput(outputId="inAirlines")
-    )
-  ),
-
-  #TABLE: Outbound Flights
-  fluidRow(
-    h4("Most Popular Airlines (outbound)"),
-    div(class="statsContainer",
-      dataTableOutput(outputId="outAirlines")
     )
   )
 )

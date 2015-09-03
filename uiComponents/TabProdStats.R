@@ -5,6 +5,24 @@
 
 div(
 
+  # AIRPORT REPORTS
+  fluidRow(
+    div(class="statsContainer",
+      p(" "),
+      fluidRow(
+        column(8,
+               h4("Airport Report")),
+        column(4,
+               downloadButton('downloadAirport', 'Download Airport report'))  #  Download BA report style
+      ),
+  
+  
+      fluidRow(
+        dataTableOutput(outputId="airportReport")
+      )
+    )
+  ),
+
   # TOP PERFORMER REPORTS
   fluidRow(
     div(class="statsContainer",
