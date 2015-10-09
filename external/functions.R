@@ -59,7 +59,7 @@ storageAssign <- function(df){
   # Temporary function, assigning non-zero value storage bookings to an airport for reporting purposes
 
   df$Airport <- ifelse(
-    (df$Booking_value_gross_total > 0)
+    (df$transaction_payment_total > 0)
       &grepl("storage",df$Airport,ignore.case=TRUE),
     sub("storage","",df$Airport),
     df$Airport
@@ -97,9 +97,9 @@ bookFilter <- function(df, airports, range, onlyNonZero = F, rangeMode = F, excl
   
   # allow toggling of showing zero value bookings NOTE: Issue
   if(onlyNonZero){
-    df <- subset(df, Booking_value_gross_total > 0) #exclude promotional or internal deliveries
+    df <- subset(df, transaction_payment_total > 0) #exclude promotional or internal deliveries
   }
-  else{df <- subset(df, Booking_value_gross_total >= 0)}
+  else{df <- subset(df, transaction_payment_total >= 0)}
   
   # REPORT MODE OPTION
   if(rangeMode){
@@ -158,7 +158,7 @@ summarizeMI <- function(df, index, pretty = F){
     bookings = length(Cancelled), 
     totalBags = sum(Total_luggage_No), 
     meanBags = round(mean(Total_luggage_No),digits=1), 
-    netRevenue = round((sum(Booking_value_gross_total) - sum(Transaction_payment_credit))/1.2, digits=2),
+    netRevenue = round((sum(transaction_payment_total) - sum(Transaction_payment_credit))/1.2, digits=2),
     promoDiscounts = -(sum(Booking_value_total_promotional_discount) + sum(AirPortr_user_booking_value_price_adjustment)),
     otherDiscounts = -(-sum(AirPortr_user_booking_value_price_adjustment) + sum(Transaction_payment_credit))
   )

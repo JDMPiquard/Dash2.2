@@ -31,16 +31,22 @@ output$bookPromos <- renderText({
   toCurrency(KPI()$promoDiscounts)
 })
 # avg bags
-output$mX  <- renderText({
+output$avgBags  <- renderText({
   KPI()$avgBags
 })
 # gross revenue per booking
-output$mY  <- renderText({
-  paste(round(KPI()$netRevBooking*1.2, digits = 2),"GBP")
+output$avgGrossBookingRev  <- renderText({
+  # paste(round(KPI()$netRevBooking*1.2, digits = 2),"GBP")
+  paste("£",round(KPI()$netRevBooking*1.2, digits = 1))
 })
 # Pre-bookings
 output$preBook <- renderText({
   paste(round(KPI()$preBook*100, digits=2),"%")
+})
+# Pre-booking Lead Time
+output$preBookLeadTime <- renderText({
+  #paste(round(KPI()$preBookLeadTime, digits=1),"days")
+  paste(KPI()$preBookLeadTime,"days")
 })
 # Return Journeys
 output$txtRtn <- renderText({
@@ -51,6 +57,6 @@ output$txtCCnD <- renderText({
   paste(KPI()$ccndBookings)
 })
 # Pre Booking Time, excluding Airport and office IP addresses
-output$preBookTime <- renderText({
-  paste(KPI()$preBookTime,"mins")
+output$completeBookTime <- renderText({
+  paste(KPI()$completeBookTime,"mins")
 })

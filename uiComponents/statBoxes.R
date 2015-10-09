@@ -28,6 +28,19 @@ div(
           div(h2(textOutput("netRev")),
           p("net revenue (excl. VAT)"),
           class = "box")
+      ),
+
+      column(2,
+        div(
+          h2(textOutput("avgBags")),
+          p("bags/booking"),
+          class = "box")
+      ),
+      
+      column(2,
+          div(h2(textOutput("avgGrossBookingRev")),
+          p("gross rev/Bkg"),
+          class = "box")
       )
     ),
     
@@ -79,22 +92,22 @@ div(
     fluidRow(
       column(2,
         div(
-          h4(textOutput("mX")),
-          p("avg bags per booking"),
-          class = "minibox")
-      ),
-      
-      column(2,
-        div(
-          h4(textOutput("mY")),
-          p("avg booking value"),
-          class = "minibox")
-      ),
-      
-      column(2,
-        div(
           h4(textOutput("preBook")),
           p("pre-bookings"),
+          class = "minibox")
+      ),
+
+      column(2,
+        div(
+          h4(textOutput("preBookLeadTime")),
+          p("avg lead time for pre-bookings"),
+          class = "minibox")
+      ),
+      
+      column(2,
+        div(
+          h4(textOutput("")),
+          p("-"),
           class = "minibox")
       ),
       
@@ -115,7 +128,7 @@ div(
       # Careful, the following is still being tested
       column(2,
         div(
-          h4(textOutput("preBookTime")),
+          h4(textOutput("completeBookTime")),
           p("Median Online Booking Time"),
           class = "minibox")
       )

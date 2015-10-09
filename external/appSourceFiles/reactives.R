@@ -156,12 +156,7 @@
     sumDate <- reactive({
       # Note that it acts on bookingsRange()
       sumBookings <- summarizeMI(bookingsRange(), c("date"))
-      # sumBookings <- ddply (bookingsRange(), c("date"), summarize, 
-      #   bookings = length(Cancelled), 
-      #   totalBags = sum(Total_luggage_No), 
-      #   meanBags = mean(Total_luggage_No), 
-      #   netRevenue = sum(Booking_value_gross_total)/1.2)
-      # sumBookings$meanNetRevenue <- sumBookings$netRevenue/sumBookings$bookings
+      
       sumBookings$day  <- weekdays(sumBookings$date)
       sumBookings <- sumBookings[c("date","day","bookings","totalBags","meanBags","netRevenue","meanNetRevenue","promoDiscounts","otherDiscounts")]
       sumBookings <- sumBookings[order(sumBookings$date, decreasing = TRUE),]
@@ -262,7 +257,7 @@
             "Hold_luggage_No", "Total_luggage_No","Customer_Firstname","customer_surname","country_origin", "Reason_for_travel",
             "Zone", "Outward_Journey_Luggage_drop_off_location_addresss_Postcode", "Outward_Journey_Luggage_drop_off_location_Type",
             "Outward_Journey_Luggage_Collection_date", "Outward_Journey_Luggage_Collection_time", "Outward_Journey_Luggage_drop_off_time",
-            "Booking_value_gross_total","In.bound_flt_code"
+            "transaction_payment_total","In.bound_flt_code"
           )]
         
         merged <- merge(df,InFlights(), all.x=T, by.x = "In.bound_flt_code", by.y = "BA.Flight")
@@ -279,7 +274,7 @@
                          "Hold_luggage_No", "Total_luggage_No","Customer_Firstname","customer_surname","country_origin", "Reason_for_travel",
                          "Zone", "Outward_Journey_Luggage_drop_off_location_addresss_Postcode", "Outward_Journey_Luggage_drop_off_location_Type",
                          "Outward_Journey_Luggage_Collection_date", "Outward_Journey_Luggage_Collection_time", "Outward_Journey_Luggage_drop_off_time",
-                         "Booking_value_gross_total","In.bound_flt_code","Origin")]
+                         "transaction_payment_total","In.bound_flt_code","Origin")]
     })
 
   # POPULAR IP ADDRESSES
@@ -305,7 +300,8 @@
       bookings <- original()
       dates <- range()
 
-      bookLGW <- bookFilter(bookings,"Gatwick",dates,onlyNonZero=F,rangeMode=T, excludeInternal=T)
+      #Fileter function
+      bookLGW <- bookFilter(bookings,c("Gatwick","Other"),dates,onlyNonZero=F,rangeMode=T, excludeInternal=T)
 
       # CLEAN UP
       # finding the correct flights
@@ -335,8 +331,8 @@
       names(info2) <- c("Category Code", "Category Text")
 
       # second set of data
-      data2 <- bookLGW[,c("Booking_value_gross_total","Total_product_number","flightLGW","Product_ID_numbers","Product_name")]
-      data2$Booking_value_gross_total = data2$Booking_value_gross_total/1.2
+      data2 <- bookLGW[,c("transaction_payment_total","Total_product_number","flightLGW","Product_ID_numbers","Product_name")]
+      data2$transaction_payment_total = data2$transaction_payment_total/1.2
       names(data2) <- c("Net Value","Quantity","Flight Number","Product Code","Product Text")
 
       # third set of strings

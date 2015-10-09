@@ -42,7 +42,18 @@ KPI <- reactive({
   
   # AVG BOOKING TIME
   IP.df <- IPs()[!(IPs()$ip_address %in% ipExclude),]  # exclude certain IPs
-  preBookTime  <- median(IP.df$BookingTime, na.rm = T)
+  completeBookTime  <- median(IP.df$BookingTime, na.rm = T)
+
+  # On Time Delivery ratings
+  # df2$actualDelivery <- ifelse(
+  #   df2$Outward.Journey.Actual.drop.off.individual>df2$Outward.Journey.Actual.drop.off.trunk,
+  #   df2$Outward.Journey.Actual.drop.off.individual,
+  #   df2$Outward.Journey.Actual.drop.off.trunk)
+  
+
+  # Avg PreBook Lead time
+  preBooks.df <- subset(df2, Department=="prebook")
+  preBookLeadTime <- mean(preBooks.df$Booking_lead_time, na.rm = T)
 
   
   return(
@@ -54,9 +65,10 @@ KPI <- reactive({
       avgBags=avgBags,
       netRevBooking=netRevBooking,
       preBook=preBook,
+      preBookLeadTime=preBookLeadTime,
       returnBookings=returnBookings,
       ccndBookings=ccndBookings,
-      preBookTime=preBookTime,
+      completeBookTime=completeBookTime,
       otherDiscounts=otherDiscounts,
       promoDiscounts=promoDiscounts,
       potentialBookValue=potentialBookValue))

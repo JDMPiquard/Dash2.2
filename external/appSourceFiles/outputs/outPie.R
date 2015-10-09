@@ -13,8 +13,8 @@ output$sex <- renderGvis({
   
   allData <- bookingsRange()
   
-  tit <- ddply (allData, "Title", summarize, count = length(Cancelled))
-  tit$Title  <- as.character(tit$Title)
+  tit <- ddply (allData, "Customer_Title", summarize, count = length(Cancelled))
+  tit$Customer_Title  <- as.character(tit$Customer_Title)
   
   doughnut <- gvisPieChart(tit, 
                            options=list(

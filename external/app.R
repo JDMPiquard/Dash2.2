@@ -112,7 +112,7 @@ source('external/appSourceFiles/outputs/outTimePlots.R',local=T)
     
     CC <- bookings[, c("Booking_reference", "Hand_luggage_No","Hold_luggage_No",
                        "Total_luggage_No","Customer_Firstname","customer_surname","country_origin", 
-                       "Outward_Journey_Luggage_Collection_date", "Booking_value_gross_total","In.bound_flt_code","Origin")]
+                       "Outward_Journey_Luggage_Collection_date", "transaction_payment_total","In.bound_flt_code","Origin")]
     rownames(CC) <- NULL
     names(CC) <- c("Booking","Hand","Hold","Total","Name","Surname","Nat","Date","Value","Flight","Origin")
     
