@@ -3,15 +3,15 @@
 
 
 
-# Gatwick-defined codes
-  retailer <- "*AP*"
-  shopCode <- "*ShopCOde*"
-  shopText <- "*Shop Text*"
-  # the following will be product dependent
-  catCode <- "*advised by GAL - Product Dependent*"
-  catText <- "*advised by GAL - Product Dependent*"
-  subCatCode <- "*advised by GAL - Product Dependent*"
-  subCatText <- "*advised by GAL - Product Dependent*"
+# Gatwick-defined codes: NOW DEFINED WITHIN SERVER.HEAD > does that make sense? unlikely to be used anywhere else
+  # retailer <- "*AP*"
+  # shopCode <- "*ShopCOde*"
+  # shopText <- "*Shop Text*"
+  # # the following will be product dependent
+  # catCode <- "*advised by GAL - Product Dependent*"
+  # catText <- "*advised by GAL - Product Dependent*"
+  # subCatCode <- "*advised by GAL - Product Dependent*"
+  # subCatText <- "*advised by GAL - Product Dependent*"
 
 # FILTER
   dates <- c(as.Date("2014-05-22", format= "%Y-%m-%d"),Sys.Date())

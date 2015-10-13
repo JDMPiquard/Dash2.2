@@ -31,16 +31,20 @@ KPI <- reactive({
   #
   potentialBookValue <- grossRevenue - promoDiscounts - otherDiscounts
   
-  # the following use bookingsRange() instead of 
+  # the following use bookingsRange()/df2 instead of sumDate()/df
+
+  #
   preBook <- sum(grepl("prebook",df2$Department))/length(df2$Department)
-  
+  #
   rtn <- ddply (df2, "Single_return", summarize, count = length(Cancelled))
   rtn$Single_return  <- as.character(rtn$Single_return)
   returnBookings <- paste(rtn[2,2])
-  
+  #
+  directionToApt <- sum(grepl("GeneralLocationToAirport",df2$Journey_direction))/length(df2$Journey_direction)
+  #
   ccndBookings <- length(Carousel()$Booking_reference)
   
-  # AVG BOOKING TIME
+  # AVG time taken to book online - excluding known Portr IPs
   IP.df <- IPs()[!(IPs()$ip_address %in% ipExclude),]  # exclude certain IPs
   completeBookTime  <- median(IP.df$BookingTime, na.rm = T)
 
@@ -67,6 +71,7 @@ KPI <- reactive({
       preBook=preBook,
       preBookLeadTime=preBookLeadTime,
       returnBookings=returnBookings,
+      directionToApt=directionToApt,
       ccndBookings=ccndBookings,
       completeBookTime=completeBookTime,
       otherDiscounts=otherDiscounts,

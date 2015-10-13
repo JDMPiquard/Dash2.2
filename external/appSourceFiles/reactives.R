@@ -113,7 +113,7 @@
   # APPLY FILTERING CONDITIONS
     all <- reactive({
 
-      bookFilter(storageAssign(original()), filter(), range(), onlyNonZero = input$showAll, rangeMode = input$reportMode, excludeInternal = input$exclInternal)
+      bookFilter(original(), filter(), range(), onlyNonZero = input$showAll, rangeMode = input$reportMode, excludeInternal = input$exclInternal, includeServiceCenters = input$incStorage)
       # see function under functions.R
     })
 
@@ -135,7 +135,7 @@
       })
 
 
-# trying  functions!!!!
+# trying  functions!!!! THE FOLLOWING IS UNUSED
     sumCum2 <- reactive({
       sumBookings <- summarizeMI(all(), c("month","year","Airport"))
       sumBookings$monthName  <- month.abb[sumBookings$month] #getting the month name fo plotting purposes

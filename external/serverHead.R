@@ -18,7 +18,7 @@ internalAddresses <- c(
   "Portr Limited",
   "Portr Ltd")
 
-# Original Start Dates
+# Original Start Dates - currently not in use
 startDate <- list(
   LCY = "2014-05-22",
   LGW = "2015-07-23",
@@ -40,3 +40,7 @@ ipExclude <- c(
   catText <- "*catText*"
   subCatCode <- "*subCatCode*"
   subCatText <- "*subCatText*"
+
+# Defining the most popular header names as global variables
+  # Intention is to easily enable to perform MI export changes to field names
+  

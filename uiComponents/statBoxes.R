@@ -106,8 +106,8 @@ div(
       
       column(2,
         div(
-          h4(textOutput("")),
-          p("-"),
+          h4(textOutput("journeyDirection")),
+          p("journeys from Location to Airport"),
           class = "minibox")
       ),
       

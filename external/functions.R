@@ -54,23 +54,23 @@ storageMerge <- function(df){
 
 }
 
-# THE FOLLOWING IS CURRENTLY NOT FUNCTIONING
+# THE FOLLOWING IS CURRENTLY NOT FUNCTIONING AND WILL PROBABLY BE DEPRECATED FOR AN ALTERNATIVE
 storageAssign <- function(df){
   # Temporary function, assigning non-zero value storage bookings to an airport for reporting purposes
 
-  df$Airport <- ifelse(
-    (df$transaction_payment_total > 0)
-      &grepl("storage",df$Airport,ignore.case=TRUE),
-    sub("storage","",df$Airport),
-    df$Airport
-  )
+  # df$Airport <- ifelse(
+  #   (df$transaction_payment_total > 0)
+  #     &grepl("storage",df$Airport,ignore.case=TRUE),
+  #   sub("storage","",df$Airport),
+  #   df$Airport
+  # )
 
   return(df)
 
 }
 
 # MAIN FILTER FUNCTION
-bookFilter <- function(df, airports, range, onlyNonZero = F, rangeMode = F, excludeInternal = F){
+bookFilter <- function(df, airports, range, onlyNonZero = F, rangeMode = F, excludeInternal = F, includeServiceCenters= F){
   # Subsets data frame by airport and booking dates (optional)
   #
   # Args:
@@ -83,7 +83,7 @@ bookFilter <- function(df, airports, range, onlyNonZero = F, rangeMode = F, excl
   # Returns:
   #   Data frame with only the relevant rows. Also adds new "filter" columns to data.frame
   
-  if(excludeInternal){
+  if(excludeInternal){  # Attempts to exclude internal bookings - misses most though!
   	df$notInternal  <- (  #  creates a list of TRUE for every internal booking
      !grepl(paste(internalAddresses,collapse="|"),  # Find internal address names
       df$Outward_Journey_Luggage_collection_location_Name,ignore.case=TRUE)
@@ -95,7 +95,7 @@ bookFilter <- function(df, airports, range, onlyNonZero = F, rangeMode = F, excl
     df <- df[df$notInternal == 1,]
   }
   
-  # allow toggling of showing zero value bookings NOTE: Issue
+  # allow toggling of showing zero value bookings NOTE: it DOES NOT identify internal bookings
   if(onlyNonZero){
     df <- subset(df, transaction_payment_total > 0) #exclude promotional or internal deliveries
   }
@@ -113,12 +113,12 @@ bookFilter <- function(df, airports, range, onlyNonZero = F, rangeMode = F, excl
       df$Outward_Journey_Luggage_collection_location_Name,ignore.case=TRUE)
      &grepl("airportterminal",  # Only accept those marked as airports
       df$Outward_Journey_Luggage_collection_location_Type,ignore.case=TRUE)
-     &!grepl("storage",  # Ignore luggage storage options
-      df$Outward_Journey_Luggage_collection_location_Name,ignore.case=TRUE)
+     &!grepl(ifelse(includeServiceCenters,"goosafraba","storage"),  # enables toggling of service center exclusion or not
+          df$Outward_Journey_Luggage_collection_location_Name,ignore.case=TRUE)
     )|(
-      grepl("storage",
+      grepl("storage",  # special case to isolate storage bookings
         df$Outward_Journey_Luggage_collection_location_Name,ignore.case=TRUE)
-      &sum(grepl('Other',
+      &sum(grepl('Other',  # only shown if the option is toggled bhy user
         airports,ignore.case=T))
     )
   
@@ -128,8 +128,8 @@ bookFilter <- function(df, airports, range, onlyNonZero = F, rangeMode = F, excl
             df$Outward_Journey_Luggage_drop_off_location_Name,ignore.case=TRUE)
       &grepl("airportterminal",
              df$Outward_Journey_Luggage_drop_off_location_Type,ignore.case=TRUE)
-      &!grepl("storage",
-              df$Outward_Journey_Luggage_drop_off_location_Name,ignore.case=TRUE)
+      &!grepl(ifelse(includeServiceCenters,"goosafraba","storage"),
+          df$Outward_Journey_Luggage_drop_off_location_Name,ignore.case=TRUE)
     )|(
       grepl("storage",
             df$Outward_Journey_Luggage_drop_off_location_Name,ignore.case=TRUE)
@@ -219,6 +219,11 @@ toCurrency <- function(num, currency = 'GBP', compact=T, round=2){
       big.mark=','),
     suf, collapse = '')
 
+}
+
+# PRETTIFY PERCENTAGE NUMBERS
+toPct <- function(num, round=2){
+  paste(round(num*100, digits=round),"%")
 }
 
 # convert names to correct fields helper

@@ -36,17 +36,19 @@ output$avgBags  <- renderText({
 })
 # gross revenue per booking
 output$avgGrossBookingRev  <- renderText({
-  # paste(round(KPI()$netRevBooking*1.2, digits = 2),"GBP")
-  paste("£",round(KPI()$netRevBooking*1.2, digits = 1))
+  toCurrency(KPI()$netRevBooking*1.2, round=1)
 })
 # Pre-bookings
 output$preBook <- renderText({
-  paste(round(KPI()$preBook*100, digits=2),"%")
+  toPct(KPI()$preBook)
 })
 # Pre-booking Lead Time
 output$preBookLeadTime <- renderText({
-  #paste(round(KPI()$preBookLeadTime, digits=1),"days")
-  paste(KPI()$preBookLeadTime,"days")
+  paste(round(KPI()$preBookLeadTime, digits=2),"days")
+})
+# Central London Collections
+output$journeyDirection <- renderText({
+  toPct(KPI()$directionToApt)
 })
 # Return Journeys
 output$txtRtn <- renderText({

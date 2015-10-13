@@ -24,9 +24,9 @@ div(
           column(11,
             fluidRow(
               h5("Analyse Portr booking data using simple interface"),
-              p("Choose appropriate date range to see in action (see options right).
-                Ignore any errors until a bookings.csv file has been uploaded, can be found at ", 
-                a(href="https://booking.portr.com/Partner/ViewBookings", target ="_blank", "booking.portr.com"))
+              p("Get your file from ", 
+                a(href="https://booking.portr.com/Partner/ViewBookings", target ="_blank", "booking.portr.com"), "then upload to start. ",
+                "Select date range and airports on the right. Advanced options below")
             )
           ),
           column(1,
@@ -34,15 +34,18 @@ div(
           )
         ),
         fluidRow(  #  Report mode checkbox - filters out irrelevant stuff
-          h6("Reporting options"),
-          column(4,
-            checkboxInput("reportMode", label="report mode")
+          h6("Advanced Reporting options (leave if unclear)"),
+          column(3,
+            checkboxInput("reportMode", label="report mode", value = F)
           ),
-          column(4,
+          column(3,
+            checkboxInput("incStorage", label="incl Storage", value = T)
+          ),
+          column(3,
             checkboxInput("showAll", label = "nonZero only", value = F)
           ),
-          column(4,
-            checkboxInput("exclInternal", label = "Exclude Internal", value = T)
+          column(3,
+            checkboxInput("exclInternal", label = "Excl Internal", value = T)
           )
         )
       ),
