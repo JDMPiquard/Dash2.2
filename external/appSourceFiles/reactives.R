@@ -86,7 +86,7 @@
         strptime(bookings$Outward_Journey_Luggage_drop_off_time, format="%H:%M"),"%H:%M:%S")
 
       # define transaction time
-      # ISSUE!!
+      # ISSUE!! Transaction time showing up as complete and utter rubbish
       bookings$transactionTime <- ifelse(
         bookings$Department=="roll up",
         bookings$Booking_time,
@@ -301,7 +301,7 @@
       dates <- range()
 
       #Fileter function
-      bookLGW <- bookFilter(bookings,c("Gatwick","Other"),dates,onlyNonZero=F,rangeMode=T, excludeInternal=T)
+      bookLGW <- bookFilter(bookings,c("Gatwick"),dates,onlyNonZero=F,rangeMode=T, excludeInternal=T,includeServiceCenters=input$incStorage)
 
       # CLEAN UP
       # finding the correct flights

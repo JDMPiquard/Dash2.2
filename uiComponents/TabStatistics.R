@@ -54,6 +54,22 @@ div(
     )
   ),
 
+  # TABLE: Referral Codes
+  fluidRow(
+    div(class="statsContainer",
+      fluidRow(
+        column(3,
+               h4("Referral Codes")),
+        column(4,
+               downloadButton('downloadRefCode', 'Download'))  #  Download BA report style
+      ),
+  
+      fluidRow(
+        dataTableOutput(outputId="refCode")
+      )
+    )
+  ),
+
   # TABLE: Nationalities
   fluidRow(
     h4("Main user Nationalities"),

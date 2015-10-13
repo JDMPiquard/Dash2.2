@@ -1,5 +1,5 @@
 # Gatwick Download function
-# 
+# NOT IN USE!! See Reactives
 
 
 
@@ -15,7 +15,7 @@
 
 # FILTER
   dates <- c(as.Date("2014-05-22", format= "%Y-%m-%d"),Sys.Date())
-  bookLGW <- bookFilter(bookings,"Gatwick",dates,onlyNonZero=T,rangeMode=T)
+  bookLGW <- bookFilter(bookings,("Gatwick"),dates,onlyNonZero=T,rangeMode=T,includeServiceCenters=input$incStorage)
 
 # CLEAN UP
   # finding the correct flights

@@ -10,11 +10,31 @@ table.default = 5
   output$refLink  <- renderDataTable({
     if (is.null(ready())) return(NULL)
     
-    # summarize by country of origin
+    # summarize by refferral link
     ref.df <- summarizeMI(bookingsRange(), "Booking_refferal_source_url", pretty=T)
     #
     ref.df
   }, options = list(pageLength = table.default))
+
+# REFERRAL CODES
+  # Table
+  output$refCode <- renderDataTable({
+    if (is.null(ready())) return(NULL)
+    
+    # summarize by refferal code
+    ref.df <- summarizeMI(bookingsRange(), "Referal_affiliate_code", pretty=T)
+    #
+    ref.df
+  }, options = list(pageLength = table.default))
+
+  output$downloadRefCode <- downloadHandler(
+
+    filename = function() { paste("Referral Codes Report ",range()[1]," to ",range()[2],
+        '.csv', sep='') },
+    content = function(file) {
+        write.csv(summarizeMI(bookingsRange(), "Referal_affiliate_code", pretty=F), file)
+      }
+  )
 
 # USER NATIONALITIES
   # Table

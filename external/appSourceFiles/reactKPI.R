@@ -3,6 +3,7 @@
 #
 
 # KPI always shows the data as reflected 
+# convert the below into a function, for all time ?
 KPI <- reactive({
   if(is.null(ready())) return(list(NULL))
 
