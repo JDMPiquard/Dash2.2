@@ -5,10 +5,13 @@
 require(shiny)
 require(rCharts)
 require(plyr)
+#  May need to remove tidyr if it masks other functions
+require(tidyr)
 require(lubridate)
 require(ggmap)
 require(ggplot2)
 require(googleVis)
+
 
 #  can also be used to store global variables, insert them below
 

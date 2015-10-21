@@ -18,7 +18,7 @@ source('external/appSourceFiles/reactKPI.R', local=T)
 
   # show selected airports
   output$selectedAirports <- renderText({
-    paste("Portr Ltd Performance Dashboard for ",paste(input$checkAirport,collapse=" + "))
+    paste("Portr Ltd Performance for ",paste(input$checkAirport,collapse=" + "))
   })
 
   output$sumStats  <- renderText({

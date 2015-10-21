@@ -12,7 +12,7 @@ output$X  <- renderText({
 })
 # Gross revenue
 output$grossRev  <- renderText({
-  toCurrency(KPI()$netRevenue*1.2, round=0)
+  toCurrency(KPI()$grossRevenue, round=0)
 })
 # Net revenue
 output$netRev <- renderText({
@@ -61,4 +61,14 @@ output$txtCCnD <- renderText({
 # Pre Booking Time, excluding Airport and office IP addresses
 output$completeBookTime <- renderText({
   paste(KPI()$completeBookTime,"mins")
+})
+# HTML Report output - financial summary of transactions
+output$copyPasteReport <- renderUI({
+  list(
+    p("Summary tansactions for ", strong(paste(filter(), collapse=" + ")),
+      " between ",strong(range()[1])," and ",strong(range()[2]),":"),
+    p("Transactions: ", KPI()$bookings),
+    p("Gross Revenue:", strong(toCurrency(KPI()$grossRev))),
+    p("Net Revenue (excl. VAT):", toCurrency(KPI()$netRevenue))
+  )  
 })

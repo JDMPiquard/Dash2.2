@@ -133,6 +133,55 @@ div(
           class = "minibox")
       )
         
+    ),
+
+    # SECONDARY FINANCIAL BOXES (discounts and promos)
+  fluidRow(
+
+    h6("Financial Breakdown")
+  ),
+  
+  fluidRow(
+
+    column(3,
+      div(
+        h4(textOutput("bookValue")),
+        p("total gross value of bookings"),
+        class = "minibox")
+    ),
+    
+    column(3,
+      div(
+        h4(textOutput("bookPromos")),
+        p("promo discounts"),
+        class = "minibox")
+    ),
+    
+    column(3,
+      div(
+        h4(textOutput("bookDiscounts")),
+        p("other price adjustments"),
+        class = "minibox")
+    ),
+
+    column(3,
+      div(
+        h4(textOutput("grossRev")),
+        p("gross revenue (inc. VAT)"),
+        class = "minibox")
+    )
+      
+  )
+  ,
+
+  fluidRow(
+
+    h6("Report (Copy Paste into e-mail)")
+  ),
+  
+  fluidRow(
+    column(9,
+        uiOutput("copyPasteReport") 
     )
   )
-)
+))

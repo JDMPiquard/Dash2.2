@@ -23,12 +23,6 @@ shinyUI(fluidPage(
       
 	# INPUTS BOX
 	source("uiComponents/inputsBox.R",local=T)$value,
-	  
-	# MAIN TOP CHARTS
-	source("uiComponents/mainGraphBox.R",local=T)$value,
-
-	# SUMMARY OUTPUT BOXES
-	source("uiComponents/statBoxes.R",local=T)$value,
       
     ##LINE BREAK INTO SELECTED PERIOD DATA
     fluidRow(
@@ -38,17 +32,33 @@ shinyUI(fluidPage(
     # TABS!!!
     tabsetPanel(id='main',
                   
-      # TAB 1: Summary View
+      # TAB 1: Standard Dashboard
+      tabPanel('Dashboard',
+
+        # MAIN TOP CHARTS
+        source("uiComponents/mainGraphBox.R",local=T)$value,
+
+        # SUMMARY OUTPUT BOXES
+        source("uiComponents/statBoxes.R",local=T)$value
+
+      ),
+
+      # TAB 2: Summary View
       tabPanel('Summary',
         source("uiComponents/Tab1Summary.R",local=T)$value   
       ),
 
-      # TAB 2: General Statistics
+      # TAB 2: KPI Analysis
+      # tabPanel('KPI Analysis',
+      #   source("",local=T)$value   
+      # ),
+
+      # TAB 3: General Statistics
       tabPanel('General Statistics',
       	source("uiComponents/TabStatistics.R",local=T)$value                    
       ),
    
-      #  TAB 3: Produt Statistics & Downloads
+      #  TAB 4: Produt Statistics & Downloads
       tabPanel('Download Summaries and Reports',
       	source("uiComponents/TabProdStats.R",local=T)$value
       )
