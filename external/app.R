@@ -13,7 +13,7 @@ source('external/appSourceFiles/reactKPI.R', local=T)
 # INDICATIVE TEXT/TITLES
   # show selected date range in title
   output$textDates  <- renderText({
-    paste("Summary for",range()[1]," to ",range()[2])
+    paste("KPIs for",range()[1]," to ",range()[2])
   })
 
   # show selected airports

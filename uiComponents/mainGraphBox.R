@@ -3,19 +3,32 @@
 # 
 
 div(
-  fluidRow(
-    column(12,  
-      ##Title
-      fluidRow(
-        div(class="sectionTitle",
-          h4(textOutput("selectedAirports"), style="color: #36648B")
+  fluidRow(       
+      ##Main
+      column(12,
+        div(class="card",
+          h6("Month by month performance"),
+          htmlOutput("MAIN")
         )
       ),
-          
-      ##Main
-      fluidRow(
-        htmlOutput("MAIN")
+
+      
+      column(6,
+        div(class="card",
+          h6("Cummulative performance"),
+          htmlOutput("yearCum")
+        )
+      ),
+
+      column(6,
+        div(class="card",
+          h6("Report"),
+          div(style="padding: 10px;",
+            uiOutput("copyPasteReport")
+          )
+        )
       )
-    ) 
+      
+     
   )  
 )

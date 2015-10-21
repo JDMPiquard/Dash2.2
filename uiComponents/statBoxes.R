@@ -2,7 +2,9 @@
 #  UI for summary statistics boxes
 # 
 
-div(
+div(class="topBox",
+  style="margin-top: 25px;
+  margin-bottom: 25px;",
   fluidRow(
     column(9,
       h4(textOutput("sumStats")))
@@ -136,8 +138,7 @@ div(
     ),
 
     # SECONDARY FINANCIAL BOXES (discounts and promos)
-  fluidRow(
-
+  column(12,
     h6("Financial Breakdown")
   ),
   
@@ -172,16 +173,20 @@ div(
     )
       
   )
-  ,
+  # ,
 
-  fluidRow(
+  # div(class = "card", 
+  #   style="margin-top: 25px;
+  #   margin-bottom: 25px;",
+  #   fluidRow(
 
-    h6("Report (Copy Paste into e-mail)")
-  ),
-  
-  fluidRow(
-    column(9,
-        uiOutput("copyPasteReport") 
-    )
-  )
+  #     h6("Report (Copy Paste into e-mail)")
+  #   ),
+    
+  #   fluidRow(
+  #     column(9,
+  #         uiOutput("copyPasteReport") 
+  #     )
+  #   )
+  # )
 ))

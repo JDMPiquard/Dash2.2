@@ -16,7 +16,8 @@ shinyUI(fluidPage(
   	# set tab title
     HTML("<title>Portr Operations Dash</title>"),
     # add custom CSS
-    tags$link(rel="stylesheet", type="text/css", href="stylePortr.css")
+    tags$link(rel="stylesheet", type="text/css", href="stylePortr.css"),
+    tags$link(href='https://fonts.googleapis.com/css?family=Arimo:400,700', rel='stylesheet', type='text/css')
   ),
   
   div(class="mainBody", 
@@ -28,12 +29,22 @@ shinyUI(fluidPage(
     fluidRow(
       p(" ")
     ),
+
+    column(12,
+      div(class="sectionTitle",
+        style="margin-bottom: 25px;
+        text-align: center",
+        h4(textOutput("selectedAirports"), style="color: #36648B")
+      )
+    ),
       
     # TABS!!!
     tabsetPanel(id='main',
                   
       # TAB 1: Standard Dashboard
       tabPanel('Dashboard',
+
+        fluidRow(p(" ")),
 
         # MAIN TOP CHARTS
         source("uiComponents/mainGraphBox.R",local=T)$value,

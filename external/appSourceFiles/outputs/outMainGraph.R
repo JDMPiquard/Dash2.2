@@ -23,7 +23,8 @@ output$MAIN <- renderGvis({
         }]",
       vAxes="[{title:'GBP/month'},
         {title:'GBP/cumulative'}]",
-      title= "bookings net revenue month by month"
+      # title= "bookings net revenue month by month",
+      legend= "none"
     )
   )
 })
@@ -54,3 +55,19 @@ output$MAIN <- renderGvis({
 #     )
 #   )
 # })
+
+output$yearCum <- renderGvis({
+  if (is.null(ready())) return(NULL)
+  
+  df <- sumCum()
+
+  charty <- gvisLineChart(df, xvar="rank",
+    yvar=c("cum"),
+    options=list(
+      # title= "cummulative revenue",
+      height=300,
+      vAxis="{title:'GBP/cumm'}"
+    )
+  )
+
+})
