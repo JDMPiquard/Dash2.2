@@ -2,41 +2,13 @@
 # Describes graph outputs for the main top Summary Box
 #
 
-# Output as a combo chart
-output$MAIN <- renderGvis({
-  if (is.null(ready())) return(NULL)
-  
-  df <- sumCum()
-
-  Combo <- gvisComboChart(df, xvar="rank",
-    yvar=c("netRevenue", "cum"),
-      #options=list(seriesType="bars",series='{1: {type:"line"}}')
-    options=list(
-      height=300,
-      series="[{
-        type:'bars',
-        isStacked: 'true',
-        targetAxisIndex:0
-        },{
-        type:'line',
-        targetAxisIndex:1
-        }]",
-      vAxes="[{title:'GBP/month'},
-        {title:'GBP/cumulative'}]",
-      # title= "bookings net revenue month by month",
-      legend= "none"
-    )
-  )
-})
-
-# Output as a stacked bar chart
+# # Output as a combo chart
 # output$MAIN <- renderGvis({
 #   if (is.null(ready())) return(NULL)
+  
+#   df <- sumCum()
 
-#   df <- summarizeMI(all(), c("month", "year", "airport"))
-#   sumBooking$rank  <- as.Date(paste0(sumBookings$year,'-',sumBookings$month,'-01'),"%Y-%m-%d")
-
-#   Combo <- gvisColumnChart(df, xvar="rank",
+#   Combo <- gvisComboChart(df, xvar="rank",
 #     yvar=c("netRevenue", "cum"),
 #       #options=list(seriesType="bars",series='{1: {type:"line"}}')
 #     options=list(
@@ -51,10 +23,42 @@ output$MAIN <- renderGvis({
 #         }]",
 #       vAxes="[{title:'GBP/month'},
 #         {title:'GBP/cumulative'}]",
-#       title= "bookings net revenue month by month"
+#       # title= "bookings net revenue month by month",
+#       legend= "none"
 #     )
 #   )
 # })
+
+# Output as a stacked bar chart
+output$MAIN <- renderGvis({
+  if (is.null(ready())) return(NULL)
+
+  df <- all()
+  df$Airport <- gsub("^.*Heathrow.*$","LHR",df$Airport)
+  df$Airport <- gsub("^.*Gatwick.*$","LGW",df$Airport)
+  df$Airport <- gsub("^.*City.*$","LCY", df$Airport)
+
+  df2 <- summarizeMI(df, c("month", "year", "Airport"))
+  df2$rank  <- as.Date(paste0(df2$year,'-',df2$month,'-01'),"%Y-%m-%d")
+  df2 <- df2[order(df2$rank),]
+
+  df3 <- data.frame(df2$rank,df2$Airport,df2$netRevenue)
+  airportRank  <- reshape(df3,idvar='df2.rank',timevar='df2.Airport',direction='wide')
+  airportRank[is.na(airportRank)] <- 0
+
+  colnames(airportRank) <- c("other","LCY","LHR","LGW")
+
+  Combo <- gvisColumnChart(airportRank, 
+    # xvar="rank",
+    # yvar=c("netRevenue", "cum"),
+    options=list(
+      height=300,
+      isStacked='true',
+      vAxis="{title:'GBP/month'}",
+      title= "bookings net revenue month by month"
+    )
+  )
+})
 
 output$yearCum <- renderGvis({
   if (is.null(ready())) return(NULL)
