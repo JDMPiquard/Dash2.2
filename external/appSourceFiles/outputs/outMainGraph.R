@@ -46,7 +46,11 @@ output$MAIN <- renderGvis({
   airportRank  <- reshape(df3,idvar='df2.rank',timevar='df2.Airport',direction='wide')
   airportRank[is.na(airportRank)] <- 0
 
-  colnames(airportRank) <- c("other","LCY","LHR","LGW")
+  names <- colnames(airportRank)
+  names <- gsub("df2.","",names)
+  names <- gsub("netRevenue.","",names)
+
+  colnames(airportRank) <- names
 
   Combo <- gvisColumnChart(airportRank, 
     # xvar="rank",
@@ -54,8 +58,10 @@ output$MAIN <- renderGvis({
     options=list(
       height=300,
       isStacked='true',
-      vAxis="{title:'GBP/month'}",
-      title= "bookings net revenue month by month"
+      legend= 'top',
+      vAxis="{title:'GBP/month'}"
+      # ,
+      # title= "bookings net revenue month by month (colours show main airport assign to booking)"
     )
   )
 })
@@ -63,14 +69,36 @@ output$MAIN <- renderGvis({
 output$yearCum <- renderGvis({
   if (is.null(ready())) return(NULL)
   
-  df <- sumCum()
+  df <- all()
+  df2 <- summarizeMI(df, c("month", "year"))
+  df2$rank  <- as.Date(paste0(df2$year,'-',df2$month,'-01'),"%Y-%m-%d")
+  df2 <- df2[order(df2$month),]
 
-  charty <- gvisLineChart(df, xvar="rank",
-    yvar=c("cum"),
+  df3 <- data.frame(df2$month,df2$year,df2$netRevenue)
+  cumRank  <- reshape(df3,idvar='df2.month',timevar='df2.year',direction='wide')
+  cumRank[is.na(cumRank)] <- 0
+
+  names <- colnames(cumRank)
+  for(i in 2:length(names)){
+    cumRank[i]  <- lapply(cumRank[i],cumsum)
+  }
+
+  names <- colnames(cumRank)
+  names <- gsub("df2.","",names)
+  names <- gsub("netRevenue.","",names)
+
+  colnames(cumRank) <- names
+
+  #  df <- sumCum()
+
+  charty <- gvisLineChart(cumRank, 
+    # xvar="rank",
+    # yvar=c("cum"),
     options=list(
       # title= "cummulative revenue",
       height=300,
-      vAxis="{title:'GBP/cumm'}"
+      legend = 'top',
+      vAxis="{title:'cummulative net Revenue (GBP)'}"
     )
   )
 
