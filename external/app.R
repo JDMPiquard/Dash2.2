@@ -23,10 +23,10 @@ source('external/appSourceFiles/reactKPI.R', local=T)
 
   output$sumStats  <- renderText({
     if(input$radio==1){
-      return("All time Summary")
+      return("All time Data")
     }
     else if(input$radio==2){
-      return(paste("Summary for",range()[1]," to ",range()[2]))
+      return(paste("Data for",range()[1]," to ",range()[2]))
     }
     else if(input$radio==3){
       return("Data for today only")

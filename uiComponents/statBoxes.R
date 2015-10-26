@@ -116,7 +116,7 @@ div(class="topBox",
       column(2,
         div(
           h4(textOutput("txtRtn")),
-          p("Return Journeys"),
+          p("Return Customers"),
           class = "minibox")
       ),
       

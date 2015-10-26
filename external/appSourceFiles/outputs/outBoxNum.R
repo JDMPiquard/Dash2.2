@@ -52,7 +52,7 @@ output$journeyDirection <- renderText({
 })
 # Return Journeys
 output$txtRtn <- renderText({
-  KPI()$returnBookings
+  toPct(KPI()$reUserPct)
 })
 # Carousel Collections
 output$txtCCnD <- renderText({
