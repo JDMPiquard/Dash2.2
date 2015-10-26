@@ -121,6 +121,88 @@ output$type <- renderGvis({
   return(doughnut)
 })
 
+# Inbound VS Outbound
+output$inOutPie <- renderGvis({
+  if (is.null(ready())) return(NULL)
+  
+  lug <- as.data.frame(matrix(ncol=2,nrow=2))
+  lug[1,1] <- "toAirpt" 
+  lug[1,2]  <- KPI()$bookings*KPI()$directionToApt
+  lug[2,1] <- "fromAirpt"
+  lug[2,2]  <- KPI()$bookings*(1-KPI()$directionToApt)
+  
+  #inserting % into field name
+  temp <- lug
+  temp[,2] <- round(lug[,2]/sum(lug[,2]), digits = 2)*100
+  temp[,1] <- paste(lug[,1], ': ',temp[,2],'%', sep='')
+  lug[,1] <- temp[,1]
+  
+  doughnut <- gvisPieChart(lug, 
+                           options=list(
+                             width=WI,
+                             height=HI,
+                             title='Journey Directions',
+                             legend='none',
+                             pieSliceText='label',
+                             pieHole=PH),
+                           chartid="doughnutInOut")
+  return(doughnut)
+})
+
+# Repeat Customers
+output$repeatPie <- renderGvis({
+  if (is.null(ready())) return(NULL)
+  
+  lug <- as.data.frame(matrix(ncol=2,nrow=2))
+  lug[1,1] <- "repeat" 
+  lug[1,2]  <- KPI()$reUserTotal
+  lug[2,1] <- "single"
+  lug[2,2]  <- KPI()$customerTotal - KPI()$reUserTotal
+  
+  #inserting % into field name
+  temp <- lug
+  temp[,2] <- round(lug[,2]/sum(lug[,2]), digits = 2)*100
+  temp[,1] <- paste(lug[,1], ': ',temp[,2],'%', sep='')
+  lug[,1] <- temp[,1]
+  
+  doughnut <- gvisPieChart(lug, 
+                           options=list(
+                             width=WI,
+                             height=HI,
+                             title='Repeat Customers',
+                             legend='none',
+                             pieSliceText='label',
+                             pieHole=PH),
+                           chartid="doughnutRepeat")
+  return(doughnut)
+})
+
+# Reason for Travel
+output$reasonForTravelPie <- renderGvis({
+  if (is.null(ready())) return(NULL)
+  
+  lug <- ddply(bookingsRange(), "Reason_for_travel", summarise, count=length(Cancelled))
+  lug[,2] <- as.numeric(lug[,2])
+  
+  #inserting % into field name
+  temp <- lug
+  temp[,2] <- round(lug[,2]/sum(lug[,2]), digits = 2)*100
+  temp[,1] <- paste(lug[,1], ': ',temp[,2],'%', sep='')
+  lug[,1] <- temp[,1]
+  
+  doughnut <- gvisPieChart(lug, 
+                           options=list(
+                             width=WI,
+                             height=HI,
+                             title='Reason for Travel',
+                             legend='none',
+                             pieSliceText='label',
+                             pieHole=PH),
+                           chartid="doughnutReason")
+  return(doughnut)
+})
+
+# Delivery Zone
 output$ZONE <- renderGvis({
   if (is.null(ready())) return(NULL)
   

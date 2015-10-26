@@ -54,13 +54,13 @@ table.default = 5
     
     # NOTE: the following has severe limitations, requiring the use of an all time KPI to correctly compute/identify repeat customers
 
-    allData <- bookingsRange()
+    # allData <- bookingsRange()
     
-    reUser.df <- reUser()
     
-    reUser <- length(reUser.df$bookings)
-    reUserpct <- round(reUser/length(allData$Cancelled),digits=3)*100
-    paste("Repeat Users: ", reUser, "total, so really about ",reUserpct,"%")
+    
+    # reUser <- length(reUser.df$bookings)
+    # reUserpct <- round(reUser/length(allData$Cancelled),digits=3)*100
+    paste("Repeat Users: ", KPI()$reUserTotal, "total, so really about ",toPct(KPI()$reUserPct))
     
   })
   
@@ -69,7 +69,8 @@ table.default = 5
   output$custom <- renderDataTable({
     if (is.null(ready())) return(NULL)
     
-    reUser()
+    #reUser()
+    reUser.df <- KPI()$reUser.df
     
   }, options = list(pageLength = table.default))
 

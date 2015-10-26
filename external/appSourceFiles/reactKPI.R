@@ -34,6 +34,27 @@ KPI <- reactive({
   
   # the following use bookingsRange()/df2 instead of sumDate()/df
 
+
+  # All time repeat users (with more than one booking)
+  reUser.alltime <- summarizeMI(all(), "customer_email", pretty=T)
+  reUser.alltime <- reUser.alltime[reUser.alltime$bkgs>1,]
+
+  # Repeat Users within date range
+  customerEmails <- ddply(df2, "customer_email", summarize, inThisRange=length(Cancelled))
+  customerTotal <- length(customerEmails[,1])
+
+  # repeat users within range()
+  reUser.alltime$inRange <- (grepl(paste(customerEmails[,1], collapse='|'),
+      reUser.alltime$customer_email,ignore.case=TRUE)
+    &!grepl(paste(eMailExclude, collapse='|'),
+      reUser.alltime$customer_email,ignore.case=TRUE))
+  reUser.df <- merge(reUser.alltime[reUser.alltime$inRange==1,],customerEmails,all.x=TRUE, sort=FALSE)
+  reUser.df$inRange <- NULL
+
+  # repeat user stats
+  reUserTotal <- length(reUser.df[,1])
+  reUserPct <- reUserTotal/customerTotal
+
   #
   preBook <- sum(grepl("prebook",df2$Department))/length(df2$Department)
   #
@@ -77,5 +98,14 @@ KPI <- reactive({
       completeBookTime=completeBookTime,
       otherDiscounts=otherDiscounts,
       promoDiscounts=promoDiscounts,
-      potentialBookValue=potentialBookValue))
+      potentialBookValue=potentialBookValue,
+      reUserTotal=reUserTotal,
+      reUserPct=reUserPct,
+      reUser.df=reUser.df,
+      customerTotal=customerTotal
+      ))
 })
+
+#  KPI2() can potentially be added to enable comparison of KPIs
+
+#  Repeat users

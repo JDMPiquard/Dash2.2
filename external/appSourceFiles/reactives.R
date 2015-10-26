@@ -14,6 +14,10 @@
     }
   })
 
+  range2  <-  reactive({
+      return(c(as.Date(startDate$LCY, format= "%Y-%m-%d"),Sys.Date()))
+  })
+
   #  Check if a bookings.csv file has been uploaded. Returns Null if not, 1 if yes
   ready <- reactive({
     temp  <- input$file
@@ -226,23 +230,6 @@
       rownames(df) <- NULL
       
       df
-    })
-
-  # REPEAT USERS DATA TABLE
-    # 
-    reUser <- reactive({
-      allData <- bookingsRange()
-      #   if(grep("bagstorage@portr.com",allData$customer_email)){
-      #     allData <- allData[- grep("bagstorage@portr.com",allData$customer_email), ]
-      #   }
-      
-      # Summarize by customer e-mail
-      reUser.df <- summarizeMI(bookingsRange(), "customer_email",pretty=T)
-
-      reUser.df <- reUser.df[reUser.df$bkgs>1,]
-      #rownames(reUser.df) <- NULL
-      
-      reUser.df
     })
 
   # SUMMARIZE CAROUSEL COLLECTIONS

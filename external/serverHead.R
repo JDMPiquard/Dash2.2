@@ -21,11 +21,11 @@ internalAddresses <- c(
   "Portr Limited",
   "Portr Ltd")
 
-# Original Start Dates - currently not in use
+# Original Start Dates - only LCY currently in use
 startDate <- list(
   LCY = "2014-05-22",
   LGW = "2015-07-23",
-  LHR = "2015-09-01")
+  LHR = "2015-10-26")
 
 # IPs to exclude
 ipExclude <- c(
@@ -33,6 +33,23 @@ ipExclude <- c(
   '213.123.58.114',
   '80.87.25.183',
   '81.144.134.68')
+
+# e-mails to exclude, note that the regex should automatically exclude all airportr e-mails
+eMailExclude <- c(
+  'gwest@portr.com',
+  'slewis@portr.com',
+  'bagstorage@portr.com',
+  'fabiodiola@gmail.com',
+  'acarey@portr.com',
+  'dpayne@portr.com',
+  'dsmith@portr.com',
+  'rdarby@portr.com',
+  'cwalsh@portr.com',
+  'jprior@portr.com',
+  'mclalor@portr.com',
+  'selina-lewis@hotmail.co.uk',
+  '^.*portr.com'
+)
 
 # GAL defined properties (EPOS download only)
   retailer <- "*AP*"

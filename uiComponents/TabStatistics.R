@@ -20,6 +20,19 @@ div(
         htmlOutput("journey")  # Single or Return
       )
     ),
+
+    # Middle row
+    fluidRow(
+      column(4,
+        htmlOutput("inOutPie")  # Inbound VS Outbound
+      ),
+      column(4,
+        htmlOutput("repeatPie")  # Repeat User % pie chart
+      ),
+      column(4,
+        htmlOutput("reasonForTravelPie")  # Reason for travel pie chart
+      )
+    ),
     
     # Bottom row
     fluidRow(
