@@ -42,13 +42,13 @@ output$MAIN <- renderGvis({
   df2$rank  <- as.Date(paste0(df2$year,'-',df2$month,'-01'),"%Y-%m-%d")
   df2 <- df2[order(df2$rank),]
 
-  df3 <- data.frame(df2$rank,df2$Airport,df2$netRevenue)
+  df3 <- data.frame(df2$rank,df2$Airport,df2$grossRevenue)
   airportRank  <- reshape(df3,idvar='df2.rank',timevar='df2.Airport',direction='wide')
   airportRank[is.na(airportRank)] <- 0
 
   names <- colnames(airportRank)
   names <- gsub("df2.","",names)
-  names <- gsub("netRevenue.","",names)
+  names <- gsub("grossRevenue.","",names)
 
   colnames(airportRank) <- names
 
@@ -74,7 +74,7 @@ output$yearCum <- renderGvis({
   df2$rank  <- as.Date(paste0(df2$year,'-',df2$month,'-01'),"%Y-%m-%d")
   df2 <- df2[order(df2$month),]
 
-  df3 <- data.frame(df2$month,df2$year,df2$netRevenue)
+  df3 <- data.frame(df2$month,df2$year,df2$grossRevenue)
   cumRank  <- reshape(df3,idvar='df2.month',timevar='df2.year',direction='wide')
   cumRank[is.na(cumRank)] <- 0
 
@@ -85,7 +85,7 @@ output$yearCum <- renderGvis({
 
   names <- colnames(cumRank)
   names <- gsub("df2.","",names)
-  names <- gsub("netRevenue.","",names)
+  names <- gsub("grossRevenue.","",names)
 
   colnames(cumRank) <- names
 
@@ -98,7 +98,7 @@ output$yearCum <- renderGvis({
       # title= "cummulative revenue",
       height=300,
       legend = 'top',
-      vAxis="{title:'cummulative net Revenue (GBP)'}"
+      vAxis="{title:'cummulative Revenue (GBP)'}"
     )
   )
 

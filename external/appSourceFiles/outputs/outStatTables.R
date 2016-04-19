@@ -36,6 +36,46 @@ table.default = 5
       }
   )
 
+# PROMO CODES
+  # Table
+  output$promoCodes <- renderDataTable({
+    if (is.null(ready())) return(NULL)
+    
+    # summarize by refferal code
+    ref.df <- summarizeMI(bookingsRange(), "Promocodes", pretty=T)
+    #
+    ref.df
+  }, options = list(pageLength = table.default))
+
+  output$downloadPromoCodes <- downloadHandler(
+
+    filename = function() { paste("Promo Codes ",range()[1]," to ",range()[2],
+        '.csv', sep='') },
+    content = function(file) {
+        write.csv(summarizeMI(bookingsRange(), "Promocodes", pretty=F), file)
+      }
+  )
+
+# PARTNER ORGANISATIONS ACCOUNTS
+  # Table
+  output$partnerOrgs <- renderDataTable({
+    if (is.null(ready())) return(NULL)
+    
+    # summarize by refferal code
+    ref.df <- summarizeMI(bookingsRange(), "Organisationt_name", pretty=T)
+    #
+    ref.df
+  }, options = list(pageLength = table.default))
+
+  output$downloadPartnerOrgs <- downloadHandler(
+
+    filename = function() { paste("Partner Org Report ",range()[1]," to ",range()[2],
+        '.csv', sep='') },
+    content = function(file) {
+        write.csv(summarizeMI(bookingsRange(), "Organisationt_name", pretty=F), file)
+      }
+  )
+
 # USER NATIONALITIES
   # Table
   output$nation  <- renderDataTable({

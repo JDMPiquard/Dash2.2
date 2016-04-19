@@ -108,6 +108,15 @@ output$type <- renderGvis({
   temp[,2] <- round(lug[,2]/sum(lug[,2]), digits = 2)*100
   temp[,1] <- paste(lug[,1], ':',temp[,2],'%', sep='')
   lug[,1] <- temp[,1]
+
+  # lug <- ddply(bookingsRange(), "Reason_for_travel", summarise, count=length(Cancelled))
+  # lug[,2] <- as.numeric(lug[,2])
+  
+  # #inserting % into field name
+  # temp <- lug
+  # temp[,2] <- round(lug[,2]/sum(lug[,2]), digits = 2)*100
+  # temp[,1] <- paste(lug[,1], ': ',temp[,2],'%', sep='')
+  # lug[,1] <- temp[,1]
   
   doughnut <- gvisPieChart(lug, 
                            options=list(

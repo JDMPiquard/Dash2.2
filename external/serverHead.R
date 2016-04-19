@@ -11,6 +11,7 @@ require(lubridate)
 require(ggmap)
 require(ggplot2)
 require(googleVis)
+require(httr)
 
 
 #  can also be used to store global variables, insert them below

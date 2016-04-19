@@ -162,6 +162,7 @@ summarizeMI <- function(df, index, pretty = F){
     promoDiscounts = -(sum(Booking_value_total_promotional_discount) + sum(AirPortr_user_booking_value_price_adjustment)),
     otherDiscounts = -(-sum(AirPortr_user_booking_value_price_adjustment) + sum(Transaction_payment_credit))
   )
+  temp$grossRevenue <- round(temp$netRevenue*1.2, digits = 2)
   temp$meanNetRevenue <- round(temp$netRevenue/temp$bookings, digits = 2)
   temp$meanGrossRevenue <- round(temp$meanNetRevenue*1.2, digits = 2)
 
@@ -228,3 +229,31 @@ toPct <- function(num, round=2){
 
 # convert names to correct fields helper
 
+
+
+# Find flight departure and arrival airports/cities
+flightDepArr <- function(flight){
+  
+  airCode <- gsub("[^A-Z]","",flight)
+  flightCode <- gsub("[^0-9]","",flight)
+  
+  urlstart <- "https://api.flightstats.com/flex/flightstatus/rest/v2/json/flight/status/"
+  urlend <- "?appId=56f3b5ac&appKey=cf16f327e32cee506850653cd206e54b&utc=false"
+  request <- paste(airCode,flightCode,"dep",year(Sys.Date()),month(Sys.Date()),day(Sys.Date()),sep="/")
+  
+  newurl <- paste(urlstart,request,urlend,sep="")
+  
+  newR <- GET(newurl)
+  Content <- content(newR,"parsed")
+  
+  return(list(
+    depCode= Content$appendix$airports[[1]]$fs,
+    depAirport= Content$appendix$airports[[1]]$name,
+    depCity= Content$appendix$airports[[1]]$city,
+    depCountry= Content$appendix$airports[[1]]$countryName,
+    arrCode= Content$appendix$airports[[2]]$fs,
+    arrAirport= Content$appendix$airports[[2]]$name,
+    arrCity= Content$appendix$airports[[2]]$city,
+    depCountry= Content$appendix$airports[[2]]$countryName
+    ))
+}

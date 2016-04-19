@@ -83,6 +83,38 @@ div(
     )
   ),
 
+  # TABLE: Promo Codes
+  fluidRow(
+    div(class="statsContainer",
+      fluidRow(
+        column(3,
+               h4("Promo Codes")),
+        column(4,
+               downloadButton('downloadPromoCodes', 'Download'))  #  Download BA report style
+      ),
+  
+      fluidRow(
+        dataTableOutput(outputId="promoCodes")
+      )
+    )
+  ),
+
+  # TABLE: Partner Organisations
+  fluidRow(
+    div(class="statsContainer",
+      fluidRow(
+        column(3,
+               h4("Partner Organisation Bookings")),
+        column(4,
+               downloadButton('downloadPartnerOrgs', 'Download'))  #  Download BA report style
+      ),
+  
+      fluidRow(
+        dataTableOutput(outputId="partnerOrgs")
+      )
+    )
+  ),
+
   # TABLE: Nationalities
   fluidRow(
     h4("Main user Nationalities"),

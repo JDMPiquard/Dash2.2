@@ -7,7 +7,7 @@ div(
       ##Main
       column(12,
         div(class="card",
-          h6("Month by month performance"),
+          h6("Month by month performance (inc VAT)"),
           htmlOutput("MAIN")
         )
       ),
@@ -15,7 +15,7 @@ div(
       
       column(6,
         div(class="card",
-          h6("Cummulative performance"),
+          h6("Cummulative performance (inc VAT)"),
           htmlOutput("yearCum")
         )
       ),
