@@ -13,6 +13,8 @@ require(ggplot2)
 require(googleVis)
 require(httr)
 
+# Increase upload file size to 30 MB
+options(shiny.maxRequestSize=30*1024^2)
 
 #  can also be used to store global variables, insert them below
 
